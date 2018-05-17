@@ -21,7 +21,7 @@ Motion::Project::App.setup do |app|
   # ===========================================================================================
   # 2. Set your app name (this is what will show up under the icon when your app is installed).
   # ===========================================================================================
-  app.name = 'PlacesOfInterest'
+  app.name = 'POI'
 
   # version for your app
   app.version = '1.0'
@@ -44,7 +44,7 @@ Motion::Project::App.setup do |app|
   # ===========================================================================================
   # 5. If you need to reference any additional iOS libraries, use the config array below.
   # ===========================================================================================
-  # app.frameworks << "StoreKit"
+  app.frameworks << 'MapKit' << 'CoreLocation' << 'Foundation'
 
   # reasonable defaults
   app.device_family = [:iphone, :ipad]
@@ -107,4 +107,9 @@ def define_icon_defaults!(app)
       'CFBundleIconFiles' => ['AppIcon60x60', 'AppIcon76x76']
     }
   }
+
+  app.info_plist['NSLocationAlwaysAndWhenInUseUsageDescription'] = 'So we know where you are when you are using the app and when you are not'
+  app.info_plist['NSLocationAlwaysUsageDescription'] = 'So we can always know where you are'
+  app.info_plist['NSLocationWhenInUseUsageDescription'] = 'So we can know where you are when you have the app open'
+
 end
