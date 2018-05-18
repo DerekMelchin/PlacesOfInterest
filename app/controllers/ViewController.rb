@@ -44,5 +44,6 @@ class ViewController < UIViewController
     # coordinate_region = MKCoordinateRegionMakeWithDistance(location.coordinate, @@region_radius, @@region_radius)
     # view.setRegion(coordinate_region, false)
   # end
+  # #
 
 end

@@ -50,7 +50,7 @@ class PlacesLoader
 
         location = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
 
-        # place =
+        # place = oh no
       end
     end
   end
