@@ -1,12 +1,18 @@
 class PlacesLoader
-  @@api_url = 'https://maps.googleapis.com/maps/api/place/'
-  @@api_key = 'AIzaSyB8MZxrd9TRDvGBrAWJnFEtbQtrzgT2h7I'
+  attr_accessor :api_url, :api_key
+
+  def init
+    @api_url = 'https://maps.googleapis.com/maps/api/place/'
+    @api_key = 'AIzaSyB8MZxrd9TRDvGBrAWJnFEtbQtrzgT2h7I'
+    super
+  end
 
   def load_POIs(location, radius = 30)
     puts 'Load POIs'
     latitude = location.coordinate.latitude
     longitude = location.coordinate.longitude
-    uri = @@api_url + "nearbysearch/json?location=#{latitude},#{longitude}&radius=#{radius}&sensor=true&types=establishment&key=#{@@api_key}"
+    uri = @api_url + "nearbysearch/json?location=#{latitude},#{longitude}"\
+        "&radius=#{radius}&sensor=true&types=establishment&key=#{@api_key}"
     url = NSURL.URLWithString(uri)
     config = NSURLSessionConfiguration.defaultSessionConfiguration
     session = NSURLSession.sessionWithConfiguration(config)
@@ -16,25 +22,36 @@ class PlacesLoader
       elsif response.statusCode == 200
         puts data
         error_ptr = Pointer.new(:object)
-        response_object = NSJSONSerialization.JSONObjectWithData(data, options:0, error:error_ptr)
-        # if error_ptr points to an error, handler(nil, error)
-
-
-        ### Getting Swifty
-        # do {
-        #   let responseObject = try JSONSerialization.jsonObject(with: data!, options: .allowFragments)
-        #   guard let responseDict = responseObject as? NSDictionary else {
-        #     return
-        #   }
-        #   handler(responseDict, nil)
-        # } catch let error as NSError {
-        #     handler(nil, error)
-        #   }
-
-
+        response_object = NSJSONSerialization.JSONObjectWithData(data,
+                                                                 options: NSJSONReadingAllowFragments,
+                                                                 error: error_ptr)
+        if response_object.class == NilClass # An error occured with previous line
+          return error_handler(nil, error_ptr[0])
+        else
+          return if response_object.class != Hash
+          return error_handler(response_object, nil)
+        end
       end
     end
     data_task = session.dataTaskWithURL(url, completionHandler: completion_handler)
     data_task.resume
+  end
+
+  def error_handler(places_dict, error)
+    if places_dict.class != NilClass
+      places_array = places_dict['results']
+      return if places_array.class == NilClass
+      places_array.each do |place_dict|
+        latitude = place_dict['geometry']['location']['lat']
+        longitude = place_dict['geometry']['location']['lng']
+        reference = place_dict['reference']
+        name = place_dict['name']
+        address = place_dict['vicinity']
+
+        location = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
+
+        # place =
+      end
+    end
   end
 end
