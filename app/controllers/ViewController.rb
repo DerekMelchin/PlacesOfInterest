@@ -16,9 +16,6 @@ class ViewController < UIViewController
     @location_manager.desiredAccuracy = 1000 # kCLLocationAccuracyNearestTenMeters
     @location_manager.startUpdatingLocation()
     @location_manager.requestWhenInUseAuthorization()
-    # @@location_manager.requestWhenInUseAuthorization
-    # initial_location = CLLocation.alloc.initWithLatitude(21.282778, longitude: -157.829444)
-    # center_map_on_location(initial_location)
   end
 
   def locationManager(manager, didUpdateLocations: locations)
@@ -33,16 +30,10 @@ class ViewController < UIViewController
         view.setRegion(region, true)
         unless @started_loading_POIs
           @started_loading_POIs = true
-          loader = PlacesLoader.alloc.init
-          loader.load_POIs(location, 1000)
+          loader = PlacesLoader.alloc.init()
+          loader.load_POIs(self, location, 1000)
         end
       end
     end
   end
-
-  # def center_map_on_location(location)
-    # coordinate_region = MKCoordinateRegionMakeWithDistance(location.coordinate, @@region_radius, @@region_radius)
-    # view.setRegion(coordinate_region, false)
-  # end
-
 end

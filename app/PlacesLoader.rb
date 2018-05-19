@@ -1,5 +1,5 @@
 class PlacesLoader
-  attr_accessor :api_url, :api_key
+  attr_accessor :api_url, :api_key, :obj_caller
 
   def init
     @api_url = 'https://maps.googleapis.com/maps/api/place/'
@@ -7,7 +7,8 @@ class PlacesLoader
     super
   end
 
-  def load_POIs(location, radius = 30)
+  def load_POIs(obj_caller, location, radius = 30)
+    @obj_caller = obj_caller
     puts 'Load POIs'
     latitude = location.coordinate.latitude
     longitude = location.coordinate.longitude
@@ -26,10 +27,10 @@ class PlacesLoader
                                                                  options: NSJSONReadingAllowFragments,
                                                                  error: error_ptr)
         if response_object.class == NilClass # An error occured with previous line
-          return error_handler(nil, error_ptr[0])
+          error_handler(nil, error_ptr[0])
         else
           return if response_object.class != Hash
-          return error_handler(response_object, nil)
+          error_handler(response_object, nil)
         end
       end
     end
@@ -50,7 +51,7 @@ class PlacesLoader
 
         location = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
 
-        # place = 
+        # @obj_caller.places << Place(...)
       end
     end
   end
