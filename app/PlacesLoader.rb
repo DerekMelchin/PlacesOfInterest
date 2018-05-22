@@ -51,7 +51,10 @@ class PlacesLoader
 
         location = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
 
-        # @obj_caller.places << Place(...)
+        place = Place.alloc.init(location, reference, name, address)
+        @obj_caller.places << place
+
+        # annotation = PlaceAnnotation.alloc.init(place.location.coordinate, place.place_name)
       end
     end
   end
