@@ -16,7 +16,8 @@ class ViewController < UIViewController
     @location_manager.desiredAccuracy = 1000 # kCLLocationAccuracyNearestTenMeters
     @location_manager.startUpdatingLocation()
     @location_manager.requestWhenInUseAuthorization()
-    self.view.showsUserLocation = true
+    view.showsUserLocation = true
+    view.delegate = self
 
     camera = UILabel.new
     camera.font = UIFont.systemFontOfSize(16)
@@ -26,7 +27,7 @@ class ViewController < UIViewController
     width = 100
     height = 60
     camera.frame = [[UIScreen.mainScreen.bounds.size.width - width, UIScreen.mainScreen.bounds.size.height - height], [width, height]]
-    self.view.addSubview(camera)
+    view.addSubview(camera)
   end
 
   def locationManager(manager, didUpdateLocations: locations)
