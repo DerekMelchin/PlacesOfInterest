@@ -54,7 +54,8 @@ class PlacesLoader
         place = Place.alloc.init(location, reference, name, address)
         @obj_caller.places << place
 
-        # annotation = PlaceAnnotation.alloc.init(place.location.coordinate, place.place_name)
+        annotation = PlaceAnnotation.alloc.init(location.coordinate, name)
+        Dispatch::Queue.main.async {@obj_caller.view.addAnnotation(annotation)}
       end
     end
   end

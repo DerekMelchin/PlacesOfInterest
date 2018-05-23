@@ -5,4 +5,9 @@ class ARAnnotation < NSObject
   azimuth = 0
   vertical_level = 0
   active = false
+
+  def init
+    super
+  end
+
 end

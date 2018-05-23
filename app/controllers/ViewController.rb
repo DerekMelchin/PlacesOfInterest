@@ -1,5 +1,5 @@
 class ViewController < UIViewController
-  attr_accessor :location_manager, :region_radius, :started_loading_POIs, :places
+  attr_accessor :location_manager, :region_radius, :started_loading_POIs, :places, :arViewController
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -16,6 +16,16 @@ class ViewController < UIViewController
     @location_manager.desiredAccuracy = 1000 # kCLLocationAccuracyNearestTenMeters
     @location_manager.startUpdatingLocation()
     @location_manager.requestWhenInUseAuthorization()
+
+    camera = UILabel.new
+    camera.font = UIFont.systemFontOfSize(20)
+    camera.text = 'Camera'
+    camera.textAlignment = UITextAlignmentCenter
+    camera.textColor = UIColor.blueColor
+    width = 120
+    height = 60
+    camera.frame = [[UIScreen.mainScreen.bounds.size.width - width, UIScreen.mainScreen.bounds.size.height - height], [width, height]]
+    self.view.addSubview(camera)
   end
 
   def locationManager(manager, didUpdateLocations: locations)

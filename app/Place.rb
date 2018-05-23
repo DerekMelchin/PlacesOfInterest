@@ -1,4 +1,4 @@
-class Place # < ARAnnotation
+class Place < ARAnnotation
   attr_accessor :reference, :place_name, :address, :phone_number, :website
 
   def info_text

@@ -26,6 +26,38 @@ Motion::Project::App.setup do |app|
   # version for your app
   app.version = '1.0'
 
+
+  app.identifier = 'com.POI.myapp'
+
+  app.development do
+    app.codesign_certificate = MotionProvisioning.certificate(
+        type: :development,
+        platform: :ios,
+        free: true)
+
+    app.provisioning_profile = MotionProvisioning.profile(
+        bundle_identifier: app.identifier,
+        app_name: app.name,
+        platform: :ios,
+        type: :development,
+        free: true)
+  end
+
+  app.release do
+    app.codesign_certificate = MotionProvisioning.certificate(
+        type: :distribution,
+        platform: :ios,
+        free: true)
+
+    app.provisioning_profile = MotionProvisioning.profile(
+        bundle_identifier: app.identifier,
+        app_name: app.name,
+        platform: :ios,
+        type: :distribution,
+        free: true)
+  end
+
+
   # ===========================================================================================
   # 3. Set your deployment target (it's recommended that you at least target 10.0 and above).
   #    If you're using RubyMotion Starter Edition. You cannot set this value (the latest
@@ -44,7 +76,7 @@ Motion::Project::App.setup do |app|
   # ===========================================================================================
   # 5. If you need to reference any additional iOS libraries, use the config array below.
   # ===========================================================================================
-  app.frameworks << 'MapKit' << 'CoreLocation' << 'Foundation'
+  app.frameworks << 'MapKit' << 'CoreLocation' << 'Foundation' << 'Dispatch'
 
   # reasonable defaults
   app.device_family = [:iphone, :ipad]
