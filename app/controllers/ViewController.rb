@@ -40,7 +40,6 @@ class ViewController < UIViewController
     if locations.count > 0
       location = locations.last
       puts "Accuracy: #{location.horizontalAccuracy}"
-
       if location.horizontalAccuracy < 100
         @location_manager.stopUpdatingLocation
         span = MKCoordinateSpanMake(0.014, 0.014)
