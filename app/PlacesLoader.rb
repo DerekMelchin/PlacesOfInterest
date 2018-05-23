@@ -10,13 +10,13 @@ class PlacesLoader
   def load_POIs(obj_caller, location, radius = 30)
     @obj_caller = obj_caller
     puts 'Load POIs'
-    latitude = location.coordinate.latitude
+    latitude  = location.coordinate.latitude
     longitude = location.coordinate.longitude
-    uri = @api_url + "nearbysearch/json?location=#{latitude},#{longitude}"\
-        "&radius=#{radius}&sensor=true&types=establishment&key=#{@api_key}"
-    url = NSURL.URLWithString(uri)
-    config = NSURLSessionConfiguration.defaultSessionConfiguration
-    session = NSURLSession.sessionWithConfiguration(config)
+    uri       = @api_url + "nearbysearch/json?location=#{latitude},#{longitude}"\
+                "&radius=#{radius}&sensor=true&types=establishment&key=#{@api_key}"
+    url       = NSURL.URLWithString(uri)
+    config    = NSURLSessionConfiguration.defaultSessionConfiguration
+    session   = NSURLSession.sessionWithConfiguration(config)
     completion_handler = lambda do |data, response, error|
       if error.class != NilClass
         puts error
@@ -44,20 +44,15 @@ class PlacesLoader
       places_array = places_dict['results']
       return if places_array.class == NilClass
       places_array.each do |place_dict|
-        latitude = place_dict['geometry']['location']['lat']
+        latitude  = place_dict['geometry']['location']['lat']
         longitude = place_dict['geometry']['location']['lng']
         reference = place_dict['reference']
-        name = place_dict['name']
-        address = place_dict['vicinity']
-
-        location = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
-
-        place = Place.alloc.init(location, reference, name, address)
+        name      = place_dict['name']
+        address   = place_dict['vicinity']
+        location  = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
+        place     = Place.alloc.init(location, reference, name, address)
         @obj_caller.places << place
-
-        annotation = MKPointAnnotation.alloc.init
-        annotation.coordinate = location.coordinate
-        Dispatch::Queue.main.async {@obj_caller.view.addAnnotation(annotation)}
+        Dispatch::Queue.main.async {@obj_caller.view.addAnnotation(place)}
       end
     end
   end

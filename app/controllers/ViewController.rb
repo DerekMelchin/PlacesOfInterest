@@ -55,6 +55,8 @@ class ViewController < UIViewController
   end
 
   def touchesEnded(touches, withEvent: event)
-    puts 'touched'
+    if event.touchesForView(@camera)
+      puts 'hello'
+    end
   end
 end
