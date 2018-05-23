@@ -19,7 +19,7 @@ class ViewController < UIViewController
 
     camera = UILabel.new
     camera.font = UIFont.systemFontOfSize(20)
-    camera.text = 'Cameras'
+    camera.text = 'Camera'
     camera.textAlignment = UITextAlignmentCenter
     camera.textColor = UIColor.blueColor
     width = 120
