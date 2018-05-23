@@ -1,10 +1,9 @@
-class PlaceAnnotation < MKPlacemark
+class PlaceAnnotation # < Placemark
   attr_accessor :coordinate, :title
 
   def init(location, title)
     @coordinate = location
     @title = title
-    self
     #super
   end
 
