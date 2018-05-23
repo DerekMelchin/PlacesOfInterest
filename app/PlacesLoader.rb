@@ -26,7 +26,7 @@ class PlacesLoader
         response_object = NSJSONSerialization.JSONObjectWithData(data,
                                                                  options: NSJSONReadingAllowFragments,
                                                                  error: error_ptr)
-        if response_object.class == NilClass # An error occured with previous line
+        if response_object.class == NilClass # An error occurred with previous line
           error_handler(nil, error_ptr[0])
         elsif response_object.class != Hash
           return
