@@ -16,6 +16,7 @@ class ViewController < UIViewController
     @location_manager.desiredAccuracy = 1000 # kCLLocationAccuracyNearestTenMeters
     @location_manager.startUpdatingLocation()
     @location_manager.requestWhenInUseAuthorization()
+    self.view.showsUserLocation = true
 
     camera = UILabel.new
     camera.font = UIFont.systemFontOfSize(20)
@@ -45,5 +46,10 @@ class ViewController < UIViewController
         end
       end
     end
+  end
+
+  def center_map_on_location(location)
+    coordinate_region = MKCoordinateRegionMakeWithDistance(location.coordinate, @region_radius, @region_radius)
+    view.setRegion(coordinate_region, false)
   end
 end

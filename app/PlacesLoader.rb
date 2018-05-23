@@ -28,8 +28,9 @@ class PlacesLoader
                                                                  error: error_ptr)
         if response_object.class == NilClass # An error occured with previous line
           error_handler(nil, error_ptr[0])
+        elsif response_object.class != Hash
+          return
         else
-          return if response_object.class != Hash
           error_handler(response_object, nil)
         end
       end
@@ -54,8 +55,8 @@ class PlacesLoader
         place = Place.alloc.init(location, reference, name, address)
         @obj_caller.places << place
 
-        annotation = PlaceAnnotation.alloc.init(location.coordinate, name)
-        Dispatch::Queue.main.async {@obj_caller.view.addAnnotation(annotation)}
+#        annotation = PlaceAnnotation.alloc.init(location.coordinate, name)
+#        Dispatch::Queue.main.async {@obj_caller.view.addAnnotation(annotation)}
       end
     end
   end
