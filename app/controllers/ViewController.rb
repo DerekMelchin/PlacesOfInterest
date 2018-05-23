@@ -1,5 +1,5 @@
 class ViewController < UIViewController
-  attr_accessor :location_manager, :region_radius, :started_loading_POIs, :places, :arViewController
+  attr_accessor :location_manager, :region_radius, :started_loading_POIs, :places, :ar_view_controller
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -52,5 +52,9 @@ class ViewController < UIViewController
   def center_map_on_location(location)
     coordinate_region = MKCoordinateRegionMakeWithDistance(location.coordinate, @region_radius, @region_radius)
     view.setRegion(coordinate_region, false)
+  end
+
+  def touchesEnded(touches, withEvent: event)
+    puts 'touched'
   end
 end
