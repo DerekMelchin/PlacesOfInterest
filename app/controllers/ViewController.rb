@@ -1,5 +1,6 @@
 class ViewController < UIViewController
-  attr_accessor :location_manager, :region_radius, :started_loading_POIs, :places, :ar_view_controller
+  attr_accessor :location_manager, :region_radius, :started_loading_POIs,
+                :places, :ar_view_controller, :camera_button_view
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -18,16 +19,21 @@ class ViewController < UIViewController
     @location_manager.requestWhenInUseAuthorization()
     view.showsUserLocation = true
     view.delegate = self
-
+    width = 100
+    height = 60
+    frame = CGRectMake(UIScreen.mainScreen.bounds.size.width - width,
+                       UIScreen.mainScreen.bounds.size.height - height,
+                       width, height)
+    @camera_button_view = UIView.alloc.initWithFrame(frame)
+    @camera_button_view.backgroundColor = UIColor.blackColor
+    view.addSubview(@camera_button_view)
     camera = UILabel.new
     camera.font = UIFont.systemFontOfSize(16)
     camera.text = 'Camera'
     camera.textAlignment = UITextAlignmentCenter
     camera.textColor = UIColor.alloc.initWithRed(0.25, green: 0.51, blue: 0.93, alpha: 1.0)
-    width = 100
-    height = 60
-    camera.frame = [[UIScreen.mainScreen.bounds.size.width - width, UIScreen.mainScreen.bounds.size.height - height], [width, height]]
-    view.addSubview(camera)
+    camera.frame = [[0, 0], [width, height]]
+    @camera_button_view.addSubview(camera)
   end
 
   def locationManager(manager, didUpdateLocations: locations)
@@ -55,8 +61,8 @@ class ViewController < UIViewController
   end
 
   def touchesEnded(touches, withEvent: event)
-    if event.touchesForView(@camera)
-      puts 'hello'
+    if event.touchesForView(@camera_button_view)
+      puts 'Opening Camera'
     end
   end
 end
