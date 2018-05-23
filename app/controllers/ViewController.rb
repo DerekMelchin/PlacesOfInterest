@@ -19,11 +19,11 @@ class ViewController < UIViewController
     self.view.showsUserLocation = true
 
     camera = UILabel.new
-    camera.font = UIFont.systemFontOfSize(20)
+    camera.font = UIFont.systemFontOfSize(16)
     camera.text = 'Camera'
     camera.textAlignment = UITextAlignmentCenter
-    camera.textColor = UIColor.blueColor
-    width = 120
+    camera.textColor = UIColor.alloc.initWithRed(0.25, green: 0.51, blue: 0.93, alpha: 1.0)
+    width = 100
     height = 60
     camera.frame = [[UIScreen.mainScreen.bounds.size.width - width, UIScreen.mainScreen.bounds.size.height - height], [width, height]]
     self.view.addSubview(camera)
