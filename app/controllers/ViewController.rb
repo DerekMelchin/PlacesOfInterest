@@ -1,6 +1,6 @@
 class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
-                :places, :ar_view_controller, :camera_button_view
+                :places, :ar_view_controller, :camera_button_view, :scene_view
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -47,7 +47,7 @@ class ViewController < UIViewController
         view.setRegion(region, true)
         unless @started_loading_POIs
           @started_loading_POIs = true
-          loader = PlacesLoader.alloc.init()
+          loader = PlacesLoader.alloc.init
           loader.load_POIs(self, location, 1000)
         end
       end
@@ -61,7 +61,11 @@ class ViewController < UIViewController
 
   def touchesEnded(touches, withEvent: event)
     if event.touchesForView(@camera_button_view)
-      puts 'Opening Camera'
+      @scene_view = ARSCNView.alloc.init
+      @scene_view.delegate = self
+      @scene_view.session.runWithConfiguration(ARWorldTrackingConfiguration.alloc.init)
+      @scene_view.showsStatistics = true
+      self.view = @scene_view
     end
   end
 end
