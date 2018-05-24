@@ -1,7 +1,6 @@
 class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
-                :places, :ar_view_controller, :camera_button, :scene_view,
-                :map_button
+                :places, :camera_button, :scene_view, :map_button
 
   def init
     @location_manager = CLLocationManager.alloc.init
