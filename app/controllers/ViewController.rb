@@ -1,6 +1,7 @@
 class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
-                :places, :ar_view_controller, :camera_button_view, :scene_view
+                :places, :ar_view_controller, :camera_button, :scene_view,
+                :map_button
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -12,28 +13,32 @@ class ViewController < UIViewController
 
   def viewDidLoad
     super
-    self.view = MKMapView.alloc.init
+    display_map
     @location_manager.delegate = self
     @location_manager.desiredAccuracy = 1000 # kCLLocationAccuracyNearestTenMeters
-    @location_manager.startUpdatingLocation()
-    @location_manager.requestWhenInUseAuthorization()
+    @location_manager.requestWhenInUseAuthorization
+  end
+
+  def display_map
+    self.view = MKMapView.alloc.init
     view.showsUserLocation = true
     view.delegate = self
-    width = 100
-    height = 60
-    frame = CGRectMake(UIScreen.mainScreen.bounds.size.width - width,
-                       UIScreen.mainScreen.bounds.size.height - height,
-                       width, height)
-    @camera_button_view = UIView.alloc.initWithFrame(frame)
-    @camera_button_view.backgroundColor = UIColor.blackColor
-    view.addSubview(@camera_button_view)
-    camera = UILabel.new
-    camera.font = UIFont.systemFontOfSize(16)
-    camera.text = 'Camera'
-    camera.textAlignment = UITextAlignmentCenter
-    camera.textColor = UIColor.alloc.initWithRed(0.25, green: 0.51, blue: 0.93, alpha: 1.0)
-    camera.frame = [[0, 0], [width, height]]
-    @camera_button_view.addSubview(camera)
+    @location_manager.startUpdatingLocation
+    if @started_loading_POIs
+      @places.each {|a| Dispatch::Queue.main.async {view.addAnnotation(a)}}
+    end
+    @camera_button = create_toggle_button('Camera')
+    view.addSubview(@camera_button)
+  end
+
+  def display_AR
+    @scene_view = ARSCNView.alloc.init
+    @scene_view.delegate = self
+    @scene_view.session.runWithConfiguration(ARWorldTrackingConfiguration.alloc.init)
+    @scene_view.showsStatistics = true
+    self.view = @scene_view
+    @map_button = create_toggle_button('Map')
+    view.addSubview(@map_button)
   end
 
   def locationManager(manager, didUpdateLocations: locations)
@@ -54,18 +59,31 @@ class ViewController < UIViewController
     end
   end
 
+  def create_toggle_button(title)
+    width = 100
+    height = 60
+    frame = CGRectMake(UIScreen.mainScreen.bounds.size.width - width,
+                       UIScreen.mainScreen.bounds.size.height - height,
+                       width, height)
+    background = UIView.alloc.initWithFrame(frame)
+    background.backgroundColor = UIColor.whiteColor
+    words = UILabel.new
+    words.font = UIFont.systemFontOfSize(16)
+    words.text = title
+    words.textAlignment = UITextAlignmentCenter
+    words.textColor = UIColor.alloc.initWithRed(0.25, green: 0.51, blue: 0.93, alpha: 1.0)
+    words.frame = [[0, 0], [width, height]]
+    background.addSubview(words)
+    background
+  end
+
   def center_map_on_location(location)
     coordinate_region = MKCoordinateRegionMakeWithDistance(location.coordinate, @region_radius, @region_radius)
     view.setRegion(coordinate_region, false)
   end
 
   def touchesEnded(touches, withEvent: event)
-    if event.touchesForView(@camera_button_view)
-      @scene_view = ARSCNView.alloc.init
-      @scene_view.delegate = self
-      @scene_view.session.runWithConfiguration(ARWorldTrackingConfiguration.alloc.init)
-      @scene_view.showsStatistics = true
-      self.view = @scene_view
-    end
+    display_AR if event.touchesForView(@camera_button)
+    display_map if event.touchesForView(@map_button)
   end
 end
