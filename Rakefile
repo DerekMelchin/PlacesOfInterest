@@ -7,6 +7,8 @@ $:.unshift("~/.rubymotion/rubymotion-templates")
 # ===========================================================================================
 
 require 'motion/project/template/ios'
+# require 'rubygems'
+# require 'motion-cocoapods'
 
 begin
   require 'bundler'
@@ -57,6 +59,10 @@ Motion::Project::App.setup do |app|
       free: true)
   end
 
+  # app.pods do
+  #   pod 'HDAugmentedReality', '~> 2.3'
+  # end
+
   # ===========================================================================================
   # 3. Set your deployment target (it's recommended that you at least target 10.0 and above).
   #    If you're using RubyMotion Starter Edition. You cannot set this value (the latest
@@ -75,7 +81,7 @@ Motion::Project::App.setup do |app|
   # ===========================================================================================
   # 5. If you need to reference any additional iOS libraries, use the config array below.
   # ===========================================================================================
-  app.frameworks << 'MapKit' << 'CoreLocation' << 'Foundation' << 'Dispatch'
+  app.frameworks << 'MapKit' << 'CoreLocation' << 'Foundation' << 'Dispatch' << 'ARKit'
 
   # reasonable defaults
   app.device_family = [:iphone, :ipad]
