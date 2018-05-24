@@ -65,7 +65,7 @@ class ViewController < UIViewController
                        UIScreen.mainScreen.bounds.size.height - height,
                        width, height)
     background = UIView.alloc.initWithFrame(frame)
-    background.backgroundColor = UIColor.whiteColor
+    background.backgroundColor = UIColor.alloc.initWithRed(1, green: 1, blue: 1, alpha: 0.7)
     words = UILabel.new
     words.font = UIFont.systemFontOfSize(16)
     words.text = title
