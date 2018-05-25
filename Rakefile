@@ -60,7 +60,8 @@ Motion::Project::App.setup do |app|
   end
 
   # app.pods do
-  #   pod 'HDAugmentedReality', '~> 2.3'
+    # use_frameworks!
+    # pod 'HDAugmentedReality', '~> 2.3.0'
   # end
 
   # ===========================================================================================
