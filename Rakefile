@@ -7,8 +7,6 @@ $:.unshift("~/.rubymotion/rubymotion-templates")
 # ===========================================================================================
 
 require 'motion/project/template/ios'
-# require 'rubygems'
-# require 'motion-cocoapods'
 
 begin
   require 'bundler'
@@ -26,23 +24,21 @@ Motion::Project::App.setup do |app|
   app.name = 'POI'
 
   # version for your app
-  app.version = '1.0'
+  app.version = '1.0.0'
 
 
-  app.identifier = 'com.POI.myapp'
+  app.identifier = 'com.wndx.POIapp'
 
   app.development do
     app.codesign_certificate = MotionProvisioning.certificate(
       type: :development,
-      platform: :ios,
-      free: true)
+      platform: :ios)
 
     app.provisioning_profile = MotionProvisioning.profile(
       bundle_identifier: app.identifier,
       app_name: app.name,
       platform: :ios,
-      type: :development,
-      free: true)
+      type: :development)
   end
 
   app.release do
@@ -59,10 +55,10 @@ Motion::Project::App.setup do |app|
       free: true)
   end
 
-  # app.pods do
-    # use_frameworks!
-    # pod 'HDAugmentedReality', '~> 2.3.0'
-  # end
+  app.pods do
+    use_frameworks!
+    pod 'HDAugmentedReality', '~> 2.3.0'
+  end
 
   # ===========================================================================================
   # 3. Set your deployment target (it's recommended that you at least target 10.0 and above).
@@ -82,8 +78,7 @@ Motion::Project::App.setup do |app|
   # ===========================================================================================
   # 5. If you need to reference any additional iOS libraries, use the config array below.
   # ===========================================================================================
-  app.frameworks << 'MapKit' << 'CoreLocation' << 'Foundation' << 'Dispatch'
-  app.frameworks << 'ARKit' << 'SceneKit'
+  app.frameworks = %w( MapKit CoreMotion CoreLocation Foundation Dispatch ARKit SceneKit)
 
   # reasonable defaults
   app.device_family = [:iphone, :ipad]

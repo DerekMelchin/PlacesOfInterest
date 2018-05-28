@@ -61,9 +61,9 @@ class ViewController < UIViewController
   def create_toggle_button(title)
     width = 100
     height = 60
-    frame = CGRectMake(UIScreen.mainScreen.bounds.size.width - width,
-                       UIScreen.mainScreen.bounds.size.height - height,
-                       width, height)
+    frame = [[UIScreen.mainScreen.bounds.size.width - width,
+             UIScreen.mainScreen.bounds.size.height - height],
+             [width, height]]
     background = UIView.alloc.initWithFrame(frame)
     background.backgroundColor = UIColor.alloc.initWithRed(1, green: 1, blue: 1, alpha: 0.7)
     words = UILabel.new
