@@ -55,11 +55,6 @@ Motion::Project::App.setup do |app|
       free: true)
   end
 
-  app.pods do
-    use_frameworks!
-    pod 'HDAugmentedReality', '~> 2.3.0'
-  end
-
   # ===========================================================================================
   # 3. Set your deployment target (it's recommended that you at least target 10.0 and above).
   #    If you're using RubyMotion Starter Edition. You cannot set this value (the latest
@@ -78,7 +73,7 @@ Motion::Project::App.setup do |app|
   # ===========================================================================================
   # 5. If you need to reference any additional iOS libraries, use the config array below.
   # ===========================================================================================
-  app.frameworks = %w( MapKit CoreMotion CoreLocation Foundation Dispatch ARKit SceneKit)
+  app.frameworks = %w(MapKit CoreMotion CoreLocation Foundation Dispatch ARKit SceneKit)
 
   # reasonable defaults
   app.device_family = [:iphone, :ipad]

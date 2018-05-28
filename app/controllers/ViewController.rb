@@ -1,6 +1,6 @@
 class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
-                :places, :camera_button, :scene_view, :map_button
+                :places, :camera_button, :scene_view, :map_button, :ar_view_controller
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -34,7 +34,6 @@ class ViewController < UIViewController
     @scene_view = ARSCNView.alloc.init
     @scene_view.delegate = self
     @scene_view.session.runWithConfiguration(ARWorldTrackingConfiguration.alloc.init)
-    @scene_view.showsStatistics = true
     self.view = @scene_view
     @map_button = create_toggle_button('Map')
     view.addSubview(@map_button)
@@ -62,8 +61,7 @@ class ViewController < UIViewController
     width = 100
     height = 60
     frame = [[UIScreen.mainScreen.bounds.size.width - width,
-             UIScreen.mainScreen.bounds.size.height - height],
-             [width, height]]
+             UIScreen.mainScreen.bounds.size.height - height], [width, height]]
     background = UIView.alloc.initWithFrame(frame)
     background.backgroundColor = UIColor.alloc.initWithRed(1, green: 1, blue: 1, alpha: 0.7)
     words = UILabel.new
