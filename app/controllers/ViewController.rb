@@ -99,21 +99,22 @@ class ViewController < UIViewController
     scene = SCNScene.scene
     geometry = SCNPyramid.pyramidWithWidth(0.1, height: 0.2, length: 0.1)
     material = SCNMaterial.material
-    material.diffuse.contents = NSColor.purpleColor
+    material.diffuse.contents = NSColor.colorWithRed(0, green: 1, blue: 1, alpha: 0.8)
+    material.doubleSided = true
     geometry.materials = [material]
 
-    node = SCNNode.nodeWithGeometry(geometry)
-    node.position = SCNVector3Make(0, 0.3, -1)
+    guide = SCNNode.nodeWithGeometry(geometry)
+    guide.position = SCNVector3Make(0, 0.3, -1)
 
-    node2 = SCNNode.nodeWithGeometry(geometry)
-    node2.position = SCNVector3Make(0, 0, -2)
+    target = SCNNode.nodeWithGeometry(geometry)
+    target.position = SCNVector3Make(0, 0, -2)
 
-    constraint = SCNLookAtConstraint.lookAtConstraintWithTarget(node2)
-    # constraint.gimbalLockEnabledEnabled = true
-    node.constraints = [constraint]
+    constraint = SCNLookAtConstraint.lookAtConstraintWithTarget(target)
+    constraint.localFront = SCNVector3Make(0, 0.2, 0)
+    guide.constraints = [constraint]
 
-    @scene_view.pointOfView.addChildNode(node)
-    scene.rootNode.addChildNode(node2)
+    @scene_view.pointOfView.addChildNode(guide)
+    scene.rootNode.addChildNode(target)
     @scene_view.scene = scene
   end
 end
