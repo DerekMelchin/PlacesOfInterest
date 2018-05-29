@@ -97,16 +97,21 @@ class ViewController < UIViewController
 
   def addBox
     scene = SCNScene.scene
-    geometry = SCNPyramid.pyramidWithWidth(0.1, height: 0.2, length: 0.1)
-    material = SCNMaterial.material
-    material.diffuse.contents = NSColor.colorWithRed(0, green: 1, blue: 1, alpha: 0.8)
-    material.doubleSided = true
-    geometry.materials = [material]
 
-    guide = SCNNode.nodeWithGeometry(geometry)
+    guide_geometry = SCNPyramid.pyramidWithWidth(0.1, height: 0.2, length: 0.1)
+    guide_material = SCNMaterial.material
+    guide_material.diffuse.contents = NSColor.colorWithRed(0, green: 1, blue: 1, alpha: 0.8)
+    guide_material.doubleSided = true
+    guide_geometry.materials = [guide_material]
+    guide = SCNNode.nodeWithGeometry(guide_geometry)
     guide.position = SCNVector3Make(0, 0.3, -1)
 
-    target = SCNNode.nodeWithGeometry(geometry)
+    target_geometry = SCNPyramid.pyramidWithWidth(0.1, height: 0.2, length: 0.1)
+    target_material = SCNMaterial.material
+    target_material.diffuse.contents = NSColor.colorWithRed(0, green: 1, blue: 0, alpha: 0.8)
+    target_material.doubleSided = true
+    target_geometry.materials = [target_material]
+    target = SCNNode.nodeWithGeometry(target_geometry)
     target.position = SCNVector3Make(0, 0, -2)
 
     constraint = SCNLookAtConstraint.lookAtConstraintWithTarget(target)
