@@ -1,4 +1,4 @@
-class Place < ARAnnotation
+class Place
   attr_accessor :reference, :place_name, :address, :phone_number, :website
 
   def info_text
@@ -12,7 +12,6 @@ class Place < ARAnnotation
     @place_name = name
     @reference = reference
     @address = address
-    # super
     @location = location
   end
 

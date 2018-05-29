@@ -1,6 +1,12 @@
+class Numeric
+  def degrees
+    self * Math::PI / 180
+  end
+end
+
 class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
-                :places, :camera_button, :scene_view, :map_button, :ar_view_controller
+                :places, :camera_button, :scene_view, :map_button
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -32,11 +38,13 @@ class ViewController < UIViewController
 
   def display_AR
     @scene_view = ARSCNView.alloc.init
+    @scene_view.autoenablesDefaultLighting = true
     @scene_view.delegate = self
     @scene_view.session.runWithConfiguration(ARWorldTrackingConfiguration.alloc.init)
     self.view = @scene_view
     @map_button = create_toggle_button('Map')
     view.addSubview(@map_button)
+    addBox
   end
 
   def locationManager(manager, didUpdateLocations: locations)
@@ -81,6 +89,25 @@ class ViewController < UIViewController
 
   def touchesEnded(touches, withEvent: event)
     display_AR if event.touchesForView(@camera_button)
-    display_map if event.touchesForView(@map_button)
+    if event.touchesForView(@map_button)
+      @scene_view.session.pause
+      display_map
+    end
+  end
+
+  def addBox
+    scene = SCNScene.scene
+    geometry = SCNPyramid.pyramidWithWidth(0.1, height: 0.2, length: 0.1)
+    material = SCNMaterial.material
+    material.diffuse.contents = NSColor.purpleColor
+    geometry.materials = [material]
+
+    node = SCNNode.nodeWithGeometry(geometry)
+    node.position = SCNVector3Make(0, 0, -0.5)
+    node.rotation = SCNVector4Make(0, 0.5, 0, 45.degrees)
+    @scene_view.pointOfView.addChildNode(node)
+    # scene.rootNode.addChildNode(node)
+    @scene_view.scene = scene
+
   end
 end
