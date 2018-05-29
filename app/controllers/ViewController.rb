@@ -103,11 +103,17 @@ class ViewController < UIViewController
     geometry.materials = [material]
 
     node = SCNNode.nodeWithGeometry(geometry)
-    node.position = SCNVector3Make(0, 0, -0.5)
-    node.rotation = SCNVector4Make(0, 0.5, 0, 45.degrees)
-    @scene_view.pointOfView.addChildNode(node)
-    # scene.rootNode.addChildNode(node)
-    @scene_view.scene = scene
+    node.position = SCNVector3Make(0, 0.3, -1)
 
+    node2 = SCNNode.nodeWithGeometry(geometry)
+    node2.position = SCNVector3Make(0, 0, -2)
+
+    constraint = SCNLookAtConstraint.lookAtConstraintWithTarget(node2)
+    # constraint.gimbalLockEnabledEnabled = true
+    node.constraints = [constraint]
+
+    @scene_view.pointOfView.addChildNode(node)
+    scene.rootNode.addChildNode(node2)
+    @scene_view.scene = scene
   end
 end

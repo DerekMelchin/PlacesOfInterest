@@ -14,8 +14,4 @@ class Place
     @address = address
     @location = location
   end
-
-  def description
-    @place_name
-  end
 end
