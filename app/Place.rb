@@ -1,5 +1,5 @@
 class Place
-  attr_accessor :reference, :place_name, :address, :phone_number, :website
+  attr_accessor :reference, :place_name, :address, :phone_number, :website, :title, :location
 
   def info_text
     info = "Address: #{@address}"
@@ -10,8 +10,17 @@ class Place
 
   def init(location, reference, name, address)
     @place_name = name
-    @reference = reference
-    @address = address
-    @location = location
+    @reference  = reference
+    @address    = address
+    @location   = location
+    self
+  end
+
+  def title
+    @place_name
+  end
+
+  def coordinate
+    @location.coordinate
   end
 end

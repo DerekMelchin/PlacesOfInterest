@@ -6,7 +6,8 @@ end
 
 class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
-                :places, :camera_button, :scene_view, :map_button
+                :places, :camera_button, :scene_view, :map_button, :map_message_box,
+                :start_button
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -32,11 +33,10 @@ class ViewController < UIViewController
     if @started_loading_POIs
       @places.each {|a| Dispatch::Queue.main.async {view.addAnnotation(a)}}
     end
-    @camera_button = create_toggle_button('Camera')
-    view.addSubview(@camera_button)
   end
 
   def display_AR
+    puts @places.length
     @scene_view = ARSCNView.alloc.init
     @scene_view.autoenablesDefaultLighting = true
     @scene_view.delegate = self
@@ -50,6 +50,7 @@ class ViewController < UIViewController
   def locationManager(manager, didUpdateLocations: locations)
     if locations.count > 0
       location = locations.last
+      puts "Longitude: #{location.coordinate.longitude}   Latitude: #{location.coordinate.latitude}"
       puts "Accuracy: #{location.horizontalAccuracy}"
       if location.horizontalAccuracy < 100
         @location_manager.stopUpdatingLocation
@@ -88,7 +89,7 @@ class ViewController < UIViewController
   end
 
   def touchesEnded(touches, withEvent: event)
-    display_AR if event.touchesForView(@camera_button)
+    display_AR if event.touchesForView(@start_button)
     if event.touchesForView(@map_button)
       @scene_view.session.pause
       display_map
@@ -121,5 +122,39 @@ class ViewController < UIViewController
     @scene_view.pointOfView.addChildNode(guide)
     scene.rootNode.addChildNode(target)
     @scene_view.scene = scene
+  end
+
+  def mapView(mapView, didSelectAnnotationView: view)
+    @map_message_box.removeFromSuperview unless @map_message_box.nil?
+    height = 80
+    frame = [[0, UIScreen.mainScreen.bounds.size.height - height],
+             [UIScreen.mainScreen.bounds.size.width, height]]
+    @map_message_box = UIView.alloc.initWithFrame(frame)
+    @map_message_box.backgroundColor = UIColor.alloc.initWithRed(0, green: 0.7, blue: 0, alpha: 0.92)
+    distance = UILabel.new
+    distance.font = UIFont.systemFontOfSize(18)
+    distance.text = 'Xm away'
+    distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
+    distance.frame = [[20, 0], [UIScreen.mainScreen.bounds.size.width, height]]
+    @map_message_box.addSubview(distance)
+
+    start_width   = 60
+    start_frame   = [[UIScreen.mainScreen.bounds.size.width - start_width, 0],
+                     [start_width, height]]
+    @start_button = UIView.alloc.initWithFrame(start_frame)
+    start = UILabel.new
+    start.font = UIFont.systemFontOfSize(18)
+    start.text = 'Start'
+    start.textColor = UIColor.alloc.initWithRed(1, green: 1, blue: 1, alpha: 1.0)
+    start.frame = [[0, 0], [start_width, height]]
+    @start_button.addSubview(start)
+    @map_message_box.addSubview(@start_button)
+
+    self.view.addSubview(@map_message_box)
+    puts view.coordinate.longitude
+  end
+
+  def mapView(mapView, didDeselectAnnotationView: view)
+    @map_message_box.removeFromSuperview
   end
 end

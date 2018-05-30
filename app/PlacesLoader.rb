@@ -44,13 +44,13 @@ class PlacesLoader
       places_array = places_dict['results']
       return if places_array.class == NilClass
       places_array.each do |place_dict|
-        latitude  = place_dict['geometry']['location']['lat']
-        longitude = place_dict['geometry']['location']['lng']
-        reference = place_dict['reference']
-        name      = place_dict['name']
-        address   = place_dict['vicinity']
-        location  = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
-        place     = Place.alloc.init(location, reference, name, address)
+        latitude    = place_dict['geometry']['location']['lat']
+        longitude   = place_dict['geometry']['location']['lng']
+        reference   = place_dict['reference']
+        name        = place_dict['name']
+        address     = place_dict['vicinity']
+        coordinate  = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
+        place       = Place.alloc.init(coordinate, reference, name, address)
         @obj_caller.places << place
         Dispatch::Queue.main.async {@obj_caller.view.addAnnotation(place)}
       end
