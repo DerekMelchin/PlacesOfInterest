@@ -27,6 +27,15 @@ class ViewController < UIViewController
 
   def display_map
     self.view = MKMapView.alloc.init
+    if @location_manager.headingAvailable
+      @location_manager.startUpdatingHeading
+    else
+      UIAlertView.alloc.initWithTitle('Heading Not Available',
+                                      message: 'Sorry, the AR won\'t work for your device.',
+                                      delegate: nil,
+                                      cancelButtonTitle: 'Ok',
+                                      otherButtonTitles: nil).show
+    end
     view.showsUserLocation = true
     view.delegate = self
     @location_manager.startUpdatingLocation
@@ -44,7 +53,7 @@ class ViewController < UIViewController
     self.view = @scene_view
     @map_button = create_toggle_button('Map')
     view.addSubview(@map_button)
-    addBox
+    addCones
   end
 
   def locationManager(manager, didUpdateLocations: locations)
@@ -96,7 +105,7 @@ class ViewController < UIViewController
     end
   end
 
-  def addBox
+  def addCones
     scene = SCNScene.scene
 
     guide_geometry = SCNPyramid.pyramidWithWidth(0.1, height: 0.2, length: 0.1)
