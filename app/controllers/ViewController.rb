@@ -7,7 +7,7 @@ end
 class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
                 :places, :camera_button, :scene_view, :map_button, :map_message_box,
-                :start_button
+                :start_button, :curr_location
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -49,7 +49,7 @@ class ViewController < UIViewController
 
   def locationManager(manager, didUpdateLocations: locations)
     if locations.count > 0
-      location = locations.last
+      location = @curr_location = locations.last
       puts "Longitude: #{location.coordinate.longitude}   Latitude: #{location.coordinate.latitude}"
       puts "Accuracy: #{location.horizontalAccuracy}"
       if location.horizontalAccuracy < 100
@@ -124,8 +124,11 @@ class ViewController < UIViewController
     @scene_view.scene = scene
   end
 
+  # Called when an annotation is selected
   def mapView(mapView, didSelectAnnotationView: view)
     @map_message_box.removeFromSuperview unless @map_message_box.nil?
+    destination = CLLocation.alloc.initWithLatitude(view.coordinate.latitude, longitude: view.coordinate.longitude)
+
     height = 80
     frame = [[0, UIScreen.mainScreen.bounds.size.height - height],
              [UIScreen.mainScreen.bounds.size.width, height]]
@@ -133,7 +136,7 @@ class ViewController < UIViewController
     @map_message_box.backgroundColor = UIColor.alloc.initWithRed(0, green: 0.7, blue: 0, alpha: 0.92)
     distance = UILabel.new
     distance.font = UIFont.systemFontOfSize(18)
-    distance.text = 'Xm away'
+    distance.text = "#{@curr_location.distanceFromLocation(destination).round}m away"
     distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
     distance.frame = [[20, 0], [UIScreen.mainScreen.bounds.size.width, height]]
     @map_message_box.addSubview(distance)
@@ -151,7 +154,6 @@ class ViewController < UIViewController
     @map_message_box.addSubview(@start_button)
 
     self.view.addSubview(@map_message_box)
-    puts view.coordinate.longitude
   end
 
   def mapView(mapView, didDeselectAnnotationView: view)

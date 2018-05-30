@@ -23,4 +23,8 @@ class Place
   def coordinate
     @location.coordinate
   end
+
+  def location
+    @location
+  end
 end
