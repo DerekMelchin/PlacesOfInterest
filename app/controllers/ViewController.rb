@@ -23,10 +23,6 @@ class ViewController < UIViewController
     @location_manager.delegate = self
     @location_manager.desiredAccuracy = 1000 # kCLLocationAccuracyNearestTenMeters
     @location_manager.requestWhenInUseAuthorization
-  end
-
-  def display_map
-    self.view = MKMapView.alloc.init
     if @location_manager.headingAvailable
       @location_manager.startUpdatingHeading
     else
@@ -36,6 +32,10 @@ class ViewController < UIViewController
                                       cancelButtonTitle: 'Ok',
                                       otherButtonTitles: nil).show
     end
+  end
+
+  def display_map
+    self.view = MKMapView.alloc.init
     view.showsUserLocation = true
     view.delegate = self
     @location_manager.startUpdatingLocation
