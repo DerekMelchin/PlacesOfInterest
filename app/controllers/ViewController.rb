@@ -98,11 +98,6 @@ class ViewController < UIViewController
     end
   end
 
-  def center_map_on_location(location)
-    coordinate_region = MKCoordinateRegionMakeWithDistance(location.coordinate, @region_radius, @region_radius)
-    view.setRegion(coordinate_region, false)
-  end
-
   def touchesEnded(touches, withEvent: event)
     display_AR if event.touchesForView(@start_button)
     if event.touchesForView(@exit_button)
@@ -140,15 +135,21 @@ class ViewController < UIViewController
   end
 
   def get_target_vec_location
-    c_lon = @curr_location.coordinate.longitude
-    c_lat = @curr_location.coordinate.latitude
-    d_lon = @destination.coordinate.longitude
-    d_lat = @destination.coordinate.latitude
-    rlat = c_lat * Math::PI / 180
-    m_per_deg_lat = 111132.92 - 559.82 * Math.cos(2* rlat) + 1.175*Math.cos(4*rlat)
-    m_per_deg_lon = 111412.84 * Math.cos(rlat) - 93.5 * Math.cos(3*rlat)
-    x = (d_lon - c_lon) * m_per_deg_lon
-    z = (c_lat - d_lat) * m_per_deg_lat
+    curr_lon = @curr_location.coordinate.longitude
+    curr_lat = @curr_location.coordinate.latitude
+    dest_lon = @destination.coordinate.longitude
+    dest_lat = @destination.coordinate.latitude
+    radian_lat = curr_lat * Math::PI / 180
+    meters_per_deg_lat = 111132.92 - 559.82 * Math.cos(2 * radian_lat) + 1.175 * Math.cos(4 * radian_lat)
+    meters_per_deg_lon = 111412.84 * Math.cos(radian_lat) - 93.5 * Math.cos(3 * radian_lat)
+    x = (dest_lon - curr_lon) * meters_per_deg_lon
+    z = (curr_lat - dest_lat) * meters_per_deg_lat
+
+    curr_alt = CLLocation.alloc.initWithLatitude(curr_lat, longitude: curr_lon)
+    dest_alt = CLLocation.alloc.initWithLatitude(dest_lat, longitude: dest_lon)
+
+    puts "Current alt: #{curr_alt.altitude}  Destination alt: #{dest_alt.altitude}"
+
     SCNVector3Make(x, -1, z)
   end
 
