@@ -10,7 +10,7 @@ end
 class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
                 :places, :camera_button, :scene_view, :map_button, :map_message_box,
-                :start_button, :curr_location, :destination
+                :start_button, :exit_button, :curr_location, :destination
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -53,9 +53,30 @@ class ViewController < UIViewController
     @scene_view.delegate = self
     @scene_view.session.runWithConfiguration(ARWorldTrackingConfiguration.alloc.init)
     self.view = @scene_view
-    @map_button = create_toggle_button('Map')
-    view.addSubview(@map_button)
     addCones
+
+    height = 80
+    ar_message_box = make_message_box(height)
+    distance = UILabel.new
+    distance.font = UIFont.systemFontOfSize(18)
+    distance.text = "#{@curr_location.distanceFromLocation(@destination).round}m away"
+    distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
+    distance.frame = [[20, 0], [UIScreen.mainScreen.bounds.size.width, height]]
+    ar_message_box.addSubview(distance)
+
+    exit_width   = 50
+    exit_frame   = [[UIScreen.mainScreen.bounds.size.width - exit_width, 0],
+                     [exit_width, height]]
+    @exit_button = UIView.alloc.initWithFrame(exit_frame)
+    exit = UILabel.new
+    exit.font = UIFont.systemFontOfSize(18)
+    exit.text = 'Exit'
+    exit.textColor = UIColor.alloc.initWithRed(1, green: 1, blue: 1, alpha: 1.0)
+    exit.frame = [[0, 0], [exit_width, height]]
+    @exit_button.addSubview(exit)
+    ar_message_box.addSubview(@exit_button)
+
+    view.addSubview(ar_message_box)
   end
 
   def locationManager(manager, didUpdateLocations: locations)
@@ -77,23 +98,6 @@ class ViewController < UIViewController
     end
   end
 
-  def create_toggle_button(title)
-    width = 100
-    height = 60
-    frame = [[UIScreen.mainScreen.bounds.size.width - width,
-             UIScreen.mainScreen.bounds.size.height - height], [width, height]]
-    background = UIView.alloc.initWithFrame(frame)
-    background.backgroundColor = UIColor.alloc.initWithRed(1, green: 1, blue: 1, alpha: 0.7)
-    words = UILabel.new
-    words.font = UIFont.systemFontOfSize(16)
-    words.text = title
-    words.textAlignment = UITextAlignmentCenter
-    words.textColor = UIColor.alloc.initWithRed(0.25, green: 0.51, blue: 0.93, alpha: 1.0)
-    words.frame = [[0, 0], [width, height]]
-    background.addSubview(words)
-    background
-  end
-
   def center_map_on_location(location)
     coordinate_region = MKCoordinateRegionMakeWithDistance(location.coordinate, @region_radius, @region_radius)
     view.setRegion(coordinate_region, false)
@@ -101,7 +105,7 @@ class ViewController < UIViewController
 
   def touchesEnded(touches, withEvent: event)
     display_AR if event.touchesForView(@start_button)
-    if event.touchesForView(@map_button)
+    if event.touchesForView(@exit_button)
       @scene_view.session.pause
       display_map
     end
