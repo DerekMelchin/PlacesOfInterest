@@ -2,12 +2,15 @@ class Numeric
   def degrees
     self * Math::PI / 180
   end
+  def meters
+    self * 10000 #/ 1.1
+  end
 end
 
 class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
                 :places, :camera_button, :scene_view, :map_button, :map_message_box,
-                :start_button, :curr_location
+                :start_button, :curr_location, :destination
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -26,7 +29,7 @@ class ViewController < UIViewController
     if @location_manager.headingAvailable
       @location_manager.startUpdatingHeading
     else
-      UIAlertView.alloc.initWithTitle('Heading Not Available',
+      UIAlertView.alloc.initWithTitle('Heading Unavailable',
                                       message: 'Sorry, the AR won\'t work for your device.',
                                       delegate: nil,
                                       cancelButtonTitle: 'Ok',
@@ -45,7 +48,6 @@ class ViewController < UIViewController
   end
 
   def display_AR
-    puts @places.length
     @scene_view = ARSCNView.alloc.init
     @scene_view.autoenablesDefaultLighting = true
     @scene_view.delegate = self
@@ -116,13 +118,13 @@ class ViewController < UIViewController
     guide = SCNNode.nodeWithGeometry(guide_geometry)
     guide.position = SCNVector3Make(0, 0.3, -1)
 
-    target_geometry = SCNPyramid.pyramidWithWidth(0.1, height: 0.2, length: 0.1)
+    target_geometry = SCNPyramid.pyramidWithWidth(2, height: 6, length: 2)
     target_material = SCNMaterial.material
     target_material.diffuse.contents = NSColor.colorWithRed(0, green: 1, blue: 0, alpha: 0.8)
     target_material.doubleSided = true
     target_geometry.materials = [target_material]
     target = SCNNode.nodeWithGeometry(target_geometry)
-    target.position = SCNVector3Make(0, 0, -2)
+    target.position = getTargetVecLocation#SCNVector3Make(0, 0, -2)
 
     constraint = SCNLookAtConstraint.lookAtConstraintWithTarget(target)
     constraint.localFront = SCNVector3Make(0, 0.2, 0)
@@ -133,19 +135,43 @@ class ViewController < UIViewController
     @scene_view.scene = scene
   end
 
-  # Called when an annotation is selected
-  def mapView(mapView, didSelectAnnotationView: view)
-    @map_message_box.removeFromSuperview unless @map_message_box.nil?
-    destination = CLLocation.alloc.initWithLatitude(view.coordinate.latitude, longitude: view.coordinate.longitude)
+  def getTargetVecLocation
+    c_lon = -112.800494 #@curr_location.coordinate.longitude #
+    c_lat = 49.735486 #@curr_location.coordinate.latitude #
 
-    height = 80
+    d_lon = -112.799703 #@destination.coordinate.longitude #
+    d_lat = 49.735644 #@destination.coordinate.latitude #
+
+    c = Math.atan((d_lat - c_lat) / (d_lon - c_lon)).degrees
+    d = 90 - @location_manager.heading.trueHeading - c
+    e = Math.sqrt((d_lat - c_lat)**2 + (d_lon - c_lon)**2)
+    x = e * Math.sin(d).degrees
+    z = Math.sqrt(e**2 - x**2)
+
+    SCNVector3Make(x.meters, -1, -z.meters)
+  end
+
+  def make_message_box(height)
     frame = [[0, UIScreen.mainScreen.bounds.size.height - height],
              [UIScreen.mainScreen.bounds.size.width, height]]
-    @map_message_box = UIView.alloc.initWithFrame(frame)
-    @map_message_box.backgroundColor = UIColor.alloc.initWithRed(0, green: 0.7, blue: 0, alpha: 0.92)
+    message_box = UIView.alloc.initWithFrame(frame)
+    message_box.backgroundColor = UIColor.alloc.initWithRed(0, green: 0.7, blue: 0, alpha: 0.92)
+    message_box
+  end
+
+  # Called when an annotation is selected
+  def mapView(mapView, didSelectAnnotationView: view)
+    if view.class.to_s == 'NSKVONotifying_MKModernUserLocationView'
+      return
+    end
+    @map_message_box.removeFromSuperview unless @map_message_box.nil?
+    @destination = CLLocation.alloc.initWithLatitude(view.coordinate.latitude, longitude: view.coordinate.longitude)
+
+    height = 80
+    @map_message_box = make_message_box(height)
     distance = UILabel.new
     distance.font = UIFont.systemFontOfSize(18)
-    distance.text = "#{@curr_location.distanceFromLocation(destination).round}m away"
+    distance.text = "#{@curr_location.distanceFromLocation(@destination).round}m away"
     distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
     distance.frame = [[20, 0], [UIScreen.mainScreen.bounds.size.width, height]]
     @map_message_box.addSubview(distance)
@@ -166,6 +192,6 @@ class ViewController < UIViewController
   end
 
   def mapView(mapView, didDeselectAnnotationView: view)
-    @map_message_box.removeFromSuperview
+    @map_message_box.removeFromSuperview unless @map_message_box.nil?
   end
 end
