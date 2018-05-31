@@ -2,15 +2,13 @@ class Numeric
   def degrees
     self * Math::PI / 180
   end
-  def meters
-    self * 10000 #/ 1.1
-  end
 end
 
 class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
                 :places, :camera_button, :scene_view, :map_message_box,
-                :start_button, :exit_button, :curr_location, :destination
+                :start_button, :exit_button, :curr_location, :destination,
+                :target_pos, :distance
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -51,18 +49,21 @@ class ViewController < UIViewController
     @scene_view = ARSCNView.alloc.init
     @scene_view.autoenablesDefaultLighting = true
     @scene_view.delegate = self
-    @scene_view.session.runWithConfiguration(ARWorldTrackingConfiguration.alloc.init)
+    configuration = ARWorldTrackingConfiguration.alloc.init
+    configuration.worldAlignment = ARWorldAlignmentGravityAndHeading
+    @scene_view.session.runWithConfiguration(configuration)
+    @scene_view.session.delegate = self
     self.view = @scene_view
-    addCones
+    add_cones
 
     height = 80
     ar_message_box = make_message_box(height)
-    distance = UILabel.new
-    distance.font = UIFont.systemFontOfSize(18)
-    distance.text = "#{@curr_location.distanceFromLocation(@destination).round}m away"
-    distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
-    distance.frame = [[20, 0], [UIScreen.mainScreen.bounds.size.width, height]]
-    ar_message_box.addSubview(distance)
+    @distance = UILabel.new
+    @distance.font = UIFont.systemFontOfSize(18)
+    @distance.text = "#{@curr_location.distanceFromLocation(@destination).round}m away"
+    @distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
+    @distance.frame = [[20, 0], [UIScreen.mainScreen.bounds.size.width, height]]
+    ar_message_box.addSubview(@distance)
 
     exit_width   = 50
     exit_frame   = [[UIScreen.mainScreen.bounds.size.width - exit_width, 0],
@@ -82,7 +83,6 @@ class ViewController < UIViewController
   def locationManager(manager, didUpdateLocations: locations)
     if locations.count > 0
       location = @curr_location = locations.last
-      puts "Longitude: #{location.coordinate.longitude}   Latitude: #{location.coordinate.latitude}"
       puts "Accuracy: #{location.horizontalAccuracy}"
       if location.horizontalAccuracy < 100
         @location_manager.stopUpdatingLocation
@@ -111,7 +111,7 @@ class ViewController < UIViewController
     end
   end
 
-  def addCones
+  def add_cones
     scene = SCNScene.scene
 
     guide_geometry = SCNPyramid.pyramidWithWidth(0.1, height: 0.2, length: 0.1)
@@ -128,7 +128,7 @@ class ViewController < UIViewController
     target_material.doubleSided = true
     target_geometry.materials = [target_material]
     target = SCNNode.nodeWithGeometry(target_geometry)
-    target.position = getTargetVecLocation#SCNVector3Make(0, 0, -2)
+    target.position = @target_pos = get_target_vec_location
 
     constraint = SCNLookAtConstraint.lookAtConstraintWithTarget(target)
     constraint.localFront = SCNVector3Make(0, 0.2, 0)
@@ -139,20 +139,17 @@ class ViewController < UIViewController
     @scene_view.scene = scene
   end
 
-  def getTargetVecLocation
-    c_lon = -112.800494 #@curr_location.coordinate.longitude #
-    c_lat = 49.735486 #@curr_location.coordinate.latitude #
-
-    d_lon = -112.799703 #@destination.coordinate.longitude #
-    d_lat = 49.735644 #@destination.coordinate.latitude #
-
-    c = Math.atan((d_lat - c_lat) / (d_lon - c_lon)).degrees
-    d = 90 - @location_manager.heading.trueHeading - c
-    e = Math.sqrt((d_lat - c_lat)**2 + (d_lon - c_lon)**2)
-    x = e * Math.sin(d).degrees
-    z = Math.sqrt(e**2 - x**2)
-
-    SCNVector3Make(x.meters, -1, -z.meters)
+  def get_target_vec_location
+    c_lon = @curr_location.coordinate.longitude
+    c_lat = @curr_location.coordinate.latitude
+    d_lon = @destination.coordinate.longitude
+    d_lat = @destination.coordinate.latitude
+    rlat = c_lat * Math::PI / 180
+    m_per_deg_lat = 111132.92 - 559.82 * Math.cos(2* rlat) + 1.175*Math.cos(4*rlat)
+    m_per_deg_lon = 111412.84 * Math.cos(rlat) - 93.5 * Math.cos(3*rlat)
+    x = (d_lon - c_lon) * m_per_deg_lon
+    z = (c_lat - d_lat) * m_per_deg_lat
+    SCNVector3Make(x, -1, z)
   end
 
   def make_message_box(height)
@@ -163,7 +160,7 @@ class ViewController < UIViewController
     message_box
   end
 
-  # Called when an annotation is selected
+  # Called when a map annotation is selected
   def mapView(mapView, didSelectAnnotationView: view)
     if view.class.to_s == 'NSKVONotifying_MKModernUserLocationView'
       return
@@ -195,7 +192,14 @@ class ViewController < UIViewController
     self.view.addSubview(@map_message_box)
   end
 
+  # Called when a map annotation is deselected
   def mapView(mapView, didDeselectAnnotationView: view)
     @map_message_box.removeFromSuperview unless @map_message_box.nil?
+  end
+
+  # Called with every AR frame update
+  def session(session, didUpdateFrame: frame)
+    me = @scene_view.pointOfView.position
+    @distance.text = "#{Math.sqrt((@target_pos.x - me.x)**2 + (@target_pos.z - me.z)**2).round}m away"
   end
 end
