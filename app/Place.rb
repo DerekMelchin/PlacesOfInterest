@@ -1,5 +1,6 @@
 class Place
-  attr_accessor :reference, :place_name, :address, :phone_number, :website, :title, :location
+  attr_accessor :reference, :place_name, :address, :phone_number, :website, :location,
+                :latitude, :longitude
 
   def info_text
     info = "Address: #{@address}"
@@ -8,11 +9,13 @@ class Place
     info
   end
 
-  def init(location, reference, name, address)
+  def init(latitude, longitude, reference, name, address)
+    @latitude   = latitude
+    @longitude  = longitude
     @place_name = name
     @reference  = reference
     @address    = address
-    @location   = location
+    @location   = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
     self
   end
 
@@ -26,5 +29,13 @@ class Place
 
   def location
     @location
+  end
+
+  def latitude
+    @latitude
+  end
+
+  def longitude
+    @longitude
   end
 end

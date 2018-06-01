@@ -60,7 +60,7 @@ class ViewController < UIViewController
     ar_message_box = make_message_box(height)
     @distance = UILabel.new
     @distance.font = UIFont.systemFontOfSize(18)
-    @distance.text = "#{@curr_location.distanceFromLocation(@destination).round}m away"
+    @distance.text = "#{@curr_location.distanceFromLocation(@destination.location).round}m away"
     @distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
     @distance.frame = [[20, 0], [UIScreen.mainScreen.bounds.size.width, height]]
     ar_message_box.addSubview(@distance)
@@ -137,8 +137,8 @@ class ViewController < UIViewController
   def get_target_vec_location
     curr_lon = @curr_location.coordinate.longitude
     curr_lat = @curr_location.coordinate.latitude
-    dest_lon = @destination.coordinate.longitude
-    dest_lat = @destination.coordinate.latitude
+    dest_lon = @destination.longitude
+    dest_lat = @destination.latitude
     radian_lat = curr_lat * Math::PI / 180
     meters_per_deg_lat = 111132.92 - 559.82 * Math.cos(2 * radian_lat) + 1.175 * Math.cos(4 * radian_lat)
     meters_per_deg_lon = 111412.84 * Math.cos(radian_lat) - 93.5 * Math.cos(3 * radian_lat)
@@ -150,7 +150,6 @@ class ViewController < UIViewController
     api_url = 'https://maps.googleapis.com/maps/api/elevation/'
     api_key = 'AIzaSyB8MZxrd9TRDvGBrAWJnFEtbQtrzgT2h7I'
     uri       = api_url + "json?locations=#{dest_lat},#{dest_lon}&key=#{api_key}"
-    puts uri
     url       = NSURL.URLWithString(uri)
     config    = NSURLSessionConfiguration.defaultSessionConfiguration
     session   = NSURLSession.sessionWithConfiguration(config)
@@ -158,7 +157,6 @@ class ViewController < UIViewController
       if error.class != NilClass
         puts error
       elsif response.statusCode == 200
-        puts data
         error_ptr = Pointer.new(:object)
         response_object = NSJSONSerialization.JSONObjectWithData(data,
                                                                  options: NSJSONReadingAllowFragments,
@@ -201,22 +199,22 @@ class ViewController < UIViewController
 
   # Called when a map annotation is selected
   def mapView(mapView, didSelectAnnotationView: view)
-    if view.class.to_s == 'NSKVONotifying_MKModernUserLocationView'
-      return
+    return if view.class.to_s == 'NSKVONotifying_MKModernUserLocationView'
+
+    @places.each do |place|
+      if place.longitude == view.coordinate.longitude && place.latitude == view.coordinate.latitude
+        @destination = place
+        break
+      end
     end
 
-    # @places.each do |place|
-    #   if place.
-    # end
-
     @map_message_box.removeFromSuperview unless @map_message_box.nil?
-    @destination = CLLocation.alloc.initWithLatitude(view.coordinate.latitude, longitude: view.coordinate.longitude)
 
     height = 80
     @map_message_box = make_message_box(height)
     distance = UILabel.new
     distance.font = UIFont.systemFontOfSize(18)
-    distance.text = "#{@curr_location.distanceFromLocation(@destination).round}m away"
+    distance.text = "#{@destination.title}" #"#{@curr_location.distanceFromLocation(@destination).round}m away"
     distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
     distance.frame = [[20, 0], [UIScreen.mainScreen.bounds.size.width, height]]
     @map_message_box.addSubview(distance)

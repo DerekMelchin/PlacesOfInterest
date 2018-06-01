@@ -9,7 +9,6 @@ class PlacesLoader
 
   def load_POIs(obj_caller, location, radius = 30)
     @obj_caller = obj_caller
-    puts 'Load POIs'
     latitude  = location.coordinate.latitude
     longitude = location.coordinate.longitude
     uri       = @api_url + "nearbysearch/json?location=#{latitude},#{longitude}"\
@@ -21,7 +20,6 @@ class PlacesLoader
       if error.class != NilClass
         puts error
       elsif response.statusCode == 200
-        puts data
         error_ptr = Pointer.new(:object)
         response_object = NSJSONSerialization.JSONObjectWithData(data,
                                                                  options: NSJSONReadingAllowFragments,
@@ -49,8 +47,8 @@ class PlacesLoader
         reference   = place_dict['reference']
         name        = place_dict['name']
         address     = place_dict['vicinity']
-        coordinate  = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
-        place       = Place.alloc.init(coordinate, reference, name, address)
+        # coordinate  = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
+        place       = Place.alloc.init(latitude, longitude, reference, name, address)
         @obj_caller.places << place
         Dispatch::Queue.main.async {@obj_caller.view.addAnnotation(place)}
       end
