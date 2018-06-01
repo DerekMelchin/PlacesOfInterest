@@ -8,7 +8,7 @@ class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
                 :places, :camera_button, :scene_view, :map_message_box,
                 :start_button, :exit_button, :curr_location, :destination,
-                :target_pos, :distance
+                :target_pos, :distance, :destination_altitude
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -145,12 +145,50 @@ class ViewController < UIViewController
     x = (dest_lon - curr_lon) * meters_per_deg_lon
     z = (curr_lat - dest_lat) * meters_per_deg_lat
 
-    curr_alt = CLLocation.alloc.initWithLatitude(curr_lat, longitude: curr_lon)
     dest_alt = CLLocation.alloc.initWithLatitude(dest_lat, longitude: dest_lon)
 
-    puts "Current alt: #{curr_alt.altitude}  Destination alt: #{dest_alt.altitude}"
+    api_url = 'https://maps.googleapis.com/maps/api/elevation/'
+    api_key = 'AIzaSyB8MZxrd9TRDvGBrAWJnFEtbQtrzgT2h7I'
+    uri       = api_url + "json?locations=#{dest_lat},#{dest_lon}&key=#{api_key}"
+    puts uri
+    url       = NSURL.URLWithString(uri)
+    config    = NSURLSessionConfiguration.defaultSessionConfiguration
+    session   = NSURLSession.sessionWithConfiguration(config)
+    completion_handler = lambda do |data, response, error|
+      if error.class != NilClass
+        puts error
+      elsif response.statusCode == 200
+        puts data
+        error_ptr = Pointer.new(:object)
+        response_object = NSJSONSerialization.JSONObjectWithData(data,
+                                                                 options: NSJSONReadingAllowFragments,
+                                                                 error: error_ptr)
+        if response_object.class == NilClass # An error occurred with previous line
+          error_handler(nil, error_ptr[0])
+        elsif response_object.class != Hash
+          puts 'return'
+          return
+        else
+          error_handler(response_object, nil)
+        end
+      end
+    end
+    data_task = session.dataTaskWithURL(url, completionHandler: completion_handler)
+    data_task.resume
 
-    SCNVector3Make(x, -1, z)
+    while @destination_altitude.nil?
+    end
+    y = @destination_altitude - @curr_location.altitude
+
+    SCNVector3Make(x, y, z)
+  end
+
+  def error_handler(dict, error)
+    unless dict.nil?
+      results = dict['results'][0]
+      return if results.nil?
+      @destination_altitude = results['elevation']
+    end
   end
 
   def make_message_box(height)
@@ -166,6 +204,11 @@ class ViewController < UIViewController
     if view.class.to_s == 'NSKVONotifying_MKModernUserLocationView'
       return
     end
+
+    # @places.each do |place|
+    #   if place.
+    # end
+
     @map_message_box.removeFromSuperview unless @map_message_box.nil?
     @destination = CLLocation.alloc.initWithLatitude(view.coordinate.latitude, longitude: view.coordinate.longitude)
 
