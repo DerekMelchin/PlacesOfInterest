@@ -56,18 +56,14 @@ class ViewController < UIViewController
     self.view = @scene_view
     add_cones
 
-    height = 80
+    height = 70
     ar_message_box = make_message_box(height)
-    @distance = UILabel.new
-    @distance.font = UIFont.systemFontOfSize(18)
-    @distance.text = "#{@curr_location.distanceFromLocation(@destination.location).round}m away"
-    @distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
-    @distance.frame = [[20, 0], [UIScreen.mainScreen.bounds.size.width, height]]
-    ar_message_box.addSubview(@distance)
+    left_padding = 20
+    vert_padding = 5
 
     exit_width   = 50
     exit_frame   = [[UIScreen.mainScreen.bounds.size.width - exit_width, 0],
-                     [exit_width, height]]
+                    [exit_width, height]]
     @exit_button = UIView.alloc.initWithFrame(exit_frame)
     exit = UILabel.new
     exit.font = UIFont.systemFontOfSize(18)
@@ -76,6 +72,20 @@ class ViewController < UIViewController
     exit.frame = [[0, 0], [exit_width, height]]
     @exit_button.addSubview(exit)
     ar_message_box.addSubview(@exit_button)
+
+    name = UILabel.new
+    name.font = UIFont.systemFontOfSize(16)
+    name.text = "#{@destination.title}"
+    name.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
+    name.frame = [[left_padding, vert_padding], [UIScreen.mainScreen.bounds.size.width - 2 * left_padding - exit_width, height / 2]]
+    ar_message_box.addSubview(name)
+
+    @distance = UILabel.new
+    @distance.font = UIFont.systemFontOfSize(18)
+    @distance.text = "#{@curr_location.distanceFromLocation(@destination.location).round}m away"
+    @distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 0.5)
+    @distance.frame = [[left_padding, height / 2 - vert_padding], [UIScreen.mainScreen.bounds.size.width - 2 *  left_padding - exit_width, height / 2]]
+    ar_message_box.addSubview(@distance)
 
     view.addSubview(ar_message_box)
   end
@@ -111,7 +121,7 @@ class ViewController < UIViewController
 
     guide_geometry = SCNPyramid.pyramidWithWidth(0.1, height: 0.2, length: 0.1)
     guide_material = SCNMaterial.material
-    guide_material.diffuse.contents = NSColor.colorWithRed(0, green: 1, blue: 1, alpha: 0.8)
+    guide_material.diffuse.contents = NSColor.colorWithRed(0, green: 0.8, blue: 0.8, alpha: 0.9) # (0, green: 1, blue: 1, alpha: 0.8)
     guide_material.doubleSided = true
     guide_geometry.materials = [guide_material]
     guide = SCNNode.nodeWithGeometry(guide_geometry)
@@ -193,7 +203,7 @@ class ViewController < UIViewController
     frame = [[0, UIScreen.mainScreen.bounds.size.height - height],
              [UIScreen.mainScreen.bounds.size.width, height]]
     message_box = UIView.alloc.initWithFrame(frame)
-    message_box.backgroundColor = UIColor.alloc.initWithRed(0, green: 0.7, blue: 0, alpha: 0.92)
+    message_box.backgroundColor = UIColor.alloc.initWithRed(0, green: 0.8, blue: 0.8, alpha: 0.9)
     message_box
   end
 
@@ -210,14 +220,10 @@ class ViewController < UIViewController
 
     @map_message_box.removeFromSuperview unless @map_message_box.nil?
 
-    height = 80
+    height = 70
+    left_padding = 20
+    vert_padding = 5
     @map_message_box = make_message_box(height)
-    distance = UILabel.new
-    distance.font = UIFont.systemFontOfSize(18)
-    distance.text = "#{@destination.title}" #"#{@curr_location.distanceFromLocation(@destination).round}m away"
-    distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
-    distance.frame = [[20, 0], [UIScreen.mainScreen.bounds.size.width, height]]
-    @map_message_box.addSubview(distance)
 
     start_width   = 60
     start_frame   = [[UIScreen.mainScreen.bounds.size.width - start_width, 0],
@@ -230,6 +236,20 @@ class ViewController < UIViewController
     start.frame = [[0, 0], [start_width, height]]
     @start_button.addSubview(start)
     @map_message_box.addSubview(@start_button)
+
+    name = UILabel.new
+    name.font = UIFont.systemFontOfSize(16)
+    name.text = "#{@destination.title}"
+    name.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
+    name.frame = [[left_padding, vert_padding], [UIScreen.mainScreen.bounds.size.width - 2 * left_padding - start_width, height / 2]]
+    @map_message_box.addSubview(name)
+
+    distance = UILabel.new
+    distance.font = UIFont.systemFontOfSize(18)
+    distance.text = "#{@curr_location.distanceFromLocation(@destination.location).round}m away"
+    distance.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 0.5)
+    distance.frame = [[left_padding, height / 2 - vert_padding], [UIScreen.mainScreen.bounds.size.width - 2 *  left_padding - start_width, height / 2]]
+    @map_message_box.addSubview(distance)
 
     self.view.addSubview(@map_message_box)
   end
