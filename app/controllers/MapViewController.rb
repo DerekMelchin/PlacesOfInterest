@@ -1,0 +1,2 @@
+class MapViewController < UIViewController
+end
