@@ -4,7 +4,7 @@ class Numeric
   end
 end
 
-class ViewController < UIViewController
+class MasterViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
                 :places, :camera_button, :scene_view, :map_message_box,
                 :start_button, :exit_button, :curr_location, :destination,
