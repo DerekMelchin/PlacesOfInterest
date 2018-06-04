@@ -8,7 +8,8 @@ class ViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
                 :places, :camera_button, :scene_view, :map_message_box,
                 :start_button, :exit_button, :curr_location, :destination,
-                :target_pos, :distance, :destination_altitude, :map_center
+                :target_pos, :distance, :destination_altitude, :map_center,
+                :did_follow_user
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -37,8 +38,12 @@ class ViewController < UIViewController
 
   def display_map
     self.view = MKMapView.alloc.init
+    view.rotateEnabled = true
+    view.showsCompass = false
     view.showsUserLocation = true
     view.delegate = self
+    camera = MKMapCamera.camera
+    view.setCamera(camera, animated: true)
     @location_manager.startUpdatingLocation
     if @started_loading_POIs
       @places.each {|a| Dispatch::Queue.main.async {view.addAnnotation(a)}}
@@ -251,5 +256,16 @@ class ViewController < UIViewController
                                     otherButtonTitles: nil).show
     @scene_view.session.pause
     display_map
+  end
+
+  def mapView(mapView, regionDidChangeAnimated: animated)
+    if !did_follow_user
+      did_follow_user = true
+      view.setUserTrackingMode(MKUserTrackingModeFollowWithHeading, animated: true)
+    end
+  end
+
+  def mapViewDidFinishLoadingMap(mapView)
+    view.setUserTrackingMode(MKUserTrackingModeFollowWithHeading, animated: true)
   end
 end
