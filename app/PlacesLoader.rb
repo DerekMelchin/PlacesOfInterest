@@ -8,7 +8,7 @@ class PlacesLoader
   end
 
   def load_POIs(obj_caller, location, radius = 30)
-    @obj_caller = obj_caller
+    @obj_caller = obj_caller.childViewControllers[0]
     latitude  = location.coordinate.latitude
     longitude = location.coordinate.longitude
     uri       = @api_url + "nearbysearch/json?location=#{latitude},#{longitude}"\

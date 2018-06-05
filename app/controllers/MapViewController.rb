@@ -3,15 +3,30 @@ class MapViewController < UIViewController
                 :places, :map_center, :did_follow_user, :map_camera, :loader
 
   def init
-    @location_manager = CLLocationManager.alloc.init
     @region_radius = 1000
     @started_loading_POIs = false
     @places = []
     super
   end
 
-  def location_manager
-    @location_manager
+  def map_center
+    @map_center
+  end
+
+  def map_center=(new_center)
+    @map_center = new_center
+  end
+
+  def started_loading_POIs
+    @started_loading_POIs
+  end
+
+  def started_loading_POIs=(new_value)
+    @started_loading_POIs = new_value
+  end
+
+  def loader
+    @loader
   end
 
   def viewDidLoad
@@ -24,45 +39,7 @@ class MapViewController < UIViewController
     view.delegate = self
     @map_camera = MKMapCamera.camera
     view.setCamera(@map_camera, animated: false)
-    @location_manager.startUpdatingLocation
-    @location_manager.delegate = self
-    @location_manager.desiredAccuracy = 1000 #kCLLocationAccuracyNearestTenMeters
-    @location_manager.requestWhenInUseAuthorization
-    if @location_manager.headingAvailable
-      @location_manager.startUpdatingHeading
-    else
-      alert = UIAlertController.alertControllerWithTitle('Heading Unavailable',
-                                                         message: 'Sorry, the AR won\'t work for your device.',
-                                                         preferredStyle: UIAlertControllerStyleAlert)
-      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
-                                             handler: nil)
-      alert.addAction(action)
-      self.presentViewController(alert, animated: true, completion: nil)
-    end
     @loader = PlacesLoader.alloc.init
-  end
-
-  # Called when the user moves locations
-  def locationManager(manager, didUpdateLocations: locations)
-    if locations.count > 0
-      location = self.parentViewController.current_location = locations.last
-      if location.horizontalAccuracy < 100
-        @map_center = location
-        @map_camera.centerCoordinate = @map_center.coordinate
-        if !@started_loading_POIs || @map_center.distanceFromLocation(locations[-2]) > 100
-          @started_loading_POIs = true
-          @loader.load_POIs(self, @map_center, 1000)
-        end
-      end
-      unless self.parentViewController.distance.nil?
-        self.parentViewController.distance.text = "#{self.parentViewController.current_location.distanceFromLocation(self.parentViewController.destination.location).round}m away"
-      end
-    end
-  end
-
-  def stop_updating_location
-    @location_manager.stopUpdatingLocation
-    @map_center = nil
   end
 
   # Called when a map annotation is selected

@@ -1,5 +1,5 @@
 class ARViewController < UIViewController
-  attr_accessor :scene_view, :target_pos, :destination_altitude, :scene_config
+  attr_accessor :scene_view, :target_pos, :destination_altitude, :scene_config, :scene
 
   def init
     super
@@ -23,7 +23,7 @@ class ARViewController < UIViewController
   end
 
   def add_cones
-    scene = SCNScene.scene
+    @scene = SCNScene.scene
     guide_geometry = SCNPyramid.pyramidWithWidth(0.1, height: 0.2, length: 0.1)
     guide_material = SCNMaterial.material
     guide_material.diffuse.contents = NSColor.colorWithRed(0, green: 0.8, blue: 0.8, alpha: 0.9)
@@ -41,9 +41,9 @@ class ARViewController < UIViewController
     constraint = SCNLookAtConstraint.lookAtConstraintWithTarget(target)
     constraint.localFront = SCNVector3Make(0, 0.2, 0)
     guide.constraints = [constraint]
+    @scene.rootNode.addChildNode(target)
     @scene_view.pointOfView.addChildNode(guide)
-    scene.rootNode.addChildNode(target)
-    @scene_view.scene = scene
+    @scene_view.scene = @scene
   end
 
   def get_target_vec_location
@@ -105,15 +105,10 @@ class ARViewController < UIViewController
 
   # Called when the AR session is interrupted
   def sessionInterruptionEnded(session)
-    alert = UIAlertController.alertControllerWithTitle('AR Session Interrupted',
-                                                        message: 'Restart the AR experience to ensure target placement accuracy',
-                                                        preferredStyle: UIAlertControllerStyleAlert)
-    action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
-                                           handler: nil)
-    alert.addAction(action)
-    self.presentViewController(alert, animated: true, completion: nil)
     @scene_view.session.pause
-    # @scene_view.session.runWithConfiguration(@scene_config, options: ARSessionRunOptionResetTracking)
-    self.parentViewController.display_map
+    @scene_view.pointOfView.childNodes[0].removeFromParentNode
+    @scene.rootNode.childNodes[0].removeFromParentNode
+    add_cones
+    @scene_view.session.runWithConfiguration(@scene_config, options: ARSessionRunOptionResetTracking)
   end
 end
