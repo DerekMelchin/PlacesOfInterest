@@ -6,7 +6,7 @@ end
 
 class MasterViewController < UIViewController
   attr_accessor :map_controller, :AR_controller, :curr_location, :destination,
-                :distance
+                :distance, :message_box
 
   def init
     super
@@ -64,6 +64,10 @@ class MasterViewController < UIViewController
 
   def distance=(new_distance)
     @distance = new_distance
+  end
+
+  def message_box
+    @message_box
   end
 
   def add_message_box(button_str, button_width)

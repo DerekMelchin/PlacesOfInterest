@@ -23,11 +23,13 @@ class MapViewController < UIViewController
     if @location_manager.headingAvailable
       @location_manager.startUpdatingHeading
     else
-      UIAlertView.alloc.initWithTitle('Heading Unavailable',
-                                      message: 'Sorry, the AR won\'t work for your device.',
-                                      delegate: nil,
-                                      cancelButtonTitle: 'Ok',
-                                      otherButtonTitles: nil).show
+      alert = UIAlertController.alertControllerWithTitle('Heading Unavailable',
+                                                         message: 'Sorry, the AR won\'t work for your device.',
+                                                         preferredStyle: UIAlertControllerStyleAlert)
+      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
+                                             handler: nil)
+      alert.addAction(action)
+      self.presentViewController(alert, animated: true, completion: nil)
     end
   end
 
@@ -85,11 +87,13 @@ class MapViewController < UIViewController
       end
     end
     if self.parentViewController.destination.nil?
-      UIAlertView.alloc.initWithTitle('Out of Range',
-                                      message: 'The place of interest needs to be within 1km to enable AR.',
-                                      delegate: nil,
-                                      cancelButtonTitle: 'Ok',
-                                      otherButtonTitles: nil).show
+      alert = UIAlertController.alertControllerWithTitle('Out of Range',
+                                                         message: 'The place of interest needs to be within 1km to enable AR.',
+                                                         preferredStyle: UIAlertControllerStyleAlert)
+      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
+                                             handler: nil)
+      alert.addAction(action)
+      self.presentViewController(alert, animated: true, completion: nil)
       return
     end
     self.parentViewController.add_message_box('Start', 60)
@@ -97,7 +101,7 @@ class MapViewController < UIViewController
 
   # Called when a map annotation is deselected
   def mapView(mapView, didDeselectAnnotationView: view)
-    @message_box.removeFromSuperview unless @message_box.nil?
+    self.parentViewController.message_box.removeFromSuperview unless self.parentViewController.message_box.nil?
   end
 
   def mapView(mapView, regionDidChangeAnimated: animated)

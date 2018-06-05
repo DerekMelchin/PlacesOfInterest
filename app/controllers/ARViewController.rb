@@ -105,11 +105,13 @@ class ARViewController < UIViewController
 
   # Called when the AR session is interrupted
   def sessionInterruptionEnded(session)
-    UIAlertView.alloc.initWithTitle('AR Session Interrupted',
-                                    message: 'Restart the AR experience to ensure target placement accuracy',
-                                    delegate: nil,
-                                    cancelButtonTitle: 'Ok',
-                                    otherButtonTitles: nil).show
+    alert = UIAlertController.alertControllerWithTitle('AR Session Interrupted',
+                                                        message: 'Restart the AR experience to ensure target placement accuracy',
+                                                        preferredStyle: UIAlertControllerStyleAlert)
+    action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
+                                           handler: nil)
+    alert.addAction(action)
+    self.presentViewController(alert, animated: true, completion: nil)
     @scene_view.session.pause
     self.parentViewController.display_map
   end
