@@ -1,5 +1,5 @@
 class ARViewController < UIViewController
-  attr_accessor :scene_view, :target_pos, :destination_altitude
+  attr_accessor :scene_view, :target_pos, :destination_altitude, :scene_config
 
   def init
     super
@@ -14,9 +14,9 @@ class ARViewController < UIViewController
     @scene_view = ARSCNView.alloc.init
     @scene_view.autoenablesDefaultLighting = true
     @scene_view.delegate = self
-    configuration = ARWorldTrackingConfiguration.alloc.init
-    configuration.worldAlignment = ARWorldAlignmentGravityAndHeading
-    @scene_view.session.runWithConfiguration(configuration)
+    @scene_config = ARWorldTrackingConfiguration.alloc.init
+    @scene_config.worldAlignment = ARWorldAlignmentGravityAndHeading
+    @scene_view.session.runWithConfiguration(@scene_config)
     @scene_view.session.delegate = self
     self.view = @scene_view
     add_cones
@@ -113,6 +113,7 @@ class ARViewController < UIViewController
     alert.addAction(action)
     self.presentViewController(alert, animated: true, completion: nil)
     @scene_view.session.pause
+    # @scene_view.session.runWithConfiguration(@scene_config, options: ARSessionRunOptionResetTracking)
     self.parentViewController.display_map
   end
 end

@@ -47,7 +47,6 @@ class PlacesLoader
         reference   = place_dict['reference']
         name        = place_dict['name']
         address     = place_dict['vicinity']
-        # coordinate  = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
         place       = Place.alloc.init(latitude, longitude, reference, name, address)
         @obj_caller.places << place
         Dispatch::Queue.main.async {@obj_caller.view.addAnnotation(place)}

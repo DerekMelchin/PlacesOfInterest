@@ -1,6 +1,6 @@
 class MapViewController < UIViewController
   attr_accessor :location_manager, :region_radius, :started_loading_POIs,
-                :places, :map_center, :did_follow_user
+                :places, :map_center, :did_follow_user, :map_camera, :loader
 
   def init
     @location_manager = CLLocationManager.alloc.init
@@ -16,7 +16,15 @@ class MapViewController < UIViewController
 
   def viewDidLoad
     super
-    display_map
+    self.view = MKMapView.alloc.init
+    view.rotateEnabled = true
+    view.scrollEnabled = false
+    view.showsCompass = false
+    view.showsUserLocation = true
+    view.delegate = self
+    @map_camera = MKMapCamera.camera
+    view.setCamera(@map_camera, animated: false)
+    @location_manager.startUpdatingLocation
     @location_manager.delegate = self
     @location_manager.desiredAccuracy = 1000 #kCLLocationAccuracyNearestTenMeters
     @location_manager.requestWhenInUseAuthorization
@@ -31,20 +39,7 @@ class MapViewController < UIViewController
       alert.addAction(action)
       self.presentViewController(alert, animated: true, completion: nil)
     end
-  end
-
-  def display_map
-    self.view = MKMapView.alloc.init
-    view.rotateEnabled = true
-    view.showsCompass = false
-    view.showsUserLocation = true
-    view.delegate = self
-    camera = MKMapCamera.camera
-    view.setCamera(camera, animated: false)
-    @location_manager.startUpdatingLocation
-    if @started_loading_POIs
-      @places.each {|a| Dispatch::Queue.main.async {view.addAnnotation(a)}}
-    end
+    @loader = PlacesLoader.alloc.init
   end
 
   # Called when the user moves locations
@@ -52,17 +47,11 @@ class MapViewController < UIViewController
     if locations.count > 0
       location = self.parentViewController.current_location = locations.last
       if location.horizontalAccuracy < 100
-        if @map_center.nil? or @map_center.distanceFromLocation(location) > 100
-          @map_center = location
-          span = MKCoordinateSpanMake(0.014, 0.014)
-          region = MKCoordinateRegionMake(location.coordinate, span)
-          view.setRegion(region, false)
-          @started_loading_POIs = false
-        end
-        unless @started_loading_POIs
+        @map_center = location
+        @map_camera.centerCoordinate = @map_center.coordinate
+        if !@started_loading_POIs || @map_center.distanceFromLocation(locations[-2]) > 100
           @started_loading_POIs = true
-          loader = PlacesLoader.alloc.init
-          loader.load_POIs(self, location, 1000)
+          @loader.load_POIs(self, @map_center, 1000)
         end
       end
       unless self.parentViewController.distance.nil?
@@ -102,14 +91,6 @@ class MapViewController < UIViewController
   # Called when a map annotation is deselected
   def mapView(mapView, didDeselectAnnotationView: view)
     self.parentViewController.message_box.removeFromSuperview unless self.parentViewController.message_box.nil?
-  end
-
-  def mapView(mapView, regionDidChangeAnimated: animated)
-    # if !did_follow_user
-    #   puts 'called'
-    #   did_follow_user = true
-    #   view.setUserTrackingMode(MKUserTrackingModeFollowWithHeading, animated: true)
-    # end
   end
 
   def mapViewDidFinishLoadingMap(mapView)
