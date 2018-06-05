@@ -14,17 +14,6 @@ class MasterViewController < UIViewController
     @location_manager.delegate = self
     @location_manager.desiredAccuracy = 1000 #kCLLocationAccuracyNearestTenMeters
     @location_manager.requestWhenInUseAuthorization
-    if @location_manager.headingAvailable
-      @location_manager.startUpdatingHeading
-    else
-      alert = UIAlertController.alertControllerWithTitle('Heading Unavailable',
-                                                         message: 'Sorry, the AR won\'t work for your device.',
-                                                         preferredStyle: UIAlertControllerStyleAlert)
-      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
-                                             handler: nil)
-      alert.addAction(action)
-      self.presentViewController(alert, animated: true, completion: nil)
-    end
     super
   end
 
@@ -38,6 +27,21 @@ class MasterViewController < UIViewController
     @map_controller.didMoveToParentViewController(self)
     @AR_controller = ARViewController.alloc.init
     self.addChildViewController(@AR_controller)
+    Dispatch::Queue.main.after(3) { check_heading }
+  end
+
+  def check_heading
+    if @location_manager.headingAvailable
+      @location_manager.startUpdatingHeading
+    else
+      alert = UIAlertController.alertControllerWithTitle('Heading Unavailable',
+                                                         message: 'Sorry, the AR won\'t work for your device.',
+                                                         preferredStyle: UIAlertControllerStyleAlert)
+      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
+                                             handler: nil)
+      alert.addAction(action)
+      self.presentViewController(alert, animated: true, completion: nil)
+    end
   end
 
   def display_map
