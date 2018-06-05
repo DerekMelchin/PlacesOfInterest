@@ -1,5 +1,5 @@
 class PlacesLoader
-  attr_accessor :api_url, :api_key, :obj_caller
+  attr_accessor :api_url, :api_key, :caller
 
   def init
     @api_url = 'https://maps.googleapis.com/maps/api/place/'
@@ -7,8 +7,8 @@ class PlacesLoader
     super
   end
 
-  def load_POIs(obj_caller, location, radius = 30)
-    @obj_caller = obj_caller.childViewControllers[0]
+  def load_POIs(caller, location, radius = 30)
+    @caller   = caller
     latitude  = location.coordinate.latitude
     longitude = location.coordinate.longitude
     uri       = @api_url + "nearbysearch/json?location=#{latitude},#{longitude}"\
@@ -38,9 +38,9 @@ class PlacesLoader
   end
 
   def error_handler(places_dict, error)
-    if places_dict.class != NilClass
+    unless places_dict.nil?
       places_array = places_dict['results']
-      return if places_array.class == NilClass
+      return if places_array.nil?
       places_array.each do |place_dict|
         latitude    = place_dict['geometry']['location']['lat']
         longitude   = place_dict['geometry']['location']['lng']
@@ -48,8 +48,8 @@ class PlacesLoader
         name        = place_dict['name']
         address     = place_dict['vicinity']
         place       = Place.alloc.init(latitude, longitude, reference, name, address)
-        @obj_caller.places << place
-        Dispatch::Queue.main.async {@obj_caller.view.addAnnotation(place)}
+        @caller.places << place
+        Dispatch::Queue.main.async {@caller.view.addAnnotation(place)}
       end
     end
   end

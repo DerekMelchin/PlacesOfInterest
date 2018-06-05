@@ -1,12 +1,22 @@
 class ARViewController < UIViewController
-  attr_accessor :scene_view, :target_pos, :destination_altitude, :scene_config, :scene
-
-  def init
-    super
-  end
+  attr_accessor :scene_view, :target_pos, :destination_altitude, :scene_config, :scene, :api_url, :api_key
 
   def scene_view
     @scene_view
+  end
+
+  def scene_config
+    @scene_config
+  end
+
+  def scene
+    @scene
+  end
+
+  def init
+    @api_url = 'https://maps.googleapis.com/maps/api/elevation/'
+    @api_key = 'AIzaSyB8MZxrd9TRDvGBrAWJnFEtbQtrzgT2h7I'
+    super
   end
 
   def viewDidLoad
@@ -47,19 +57,17 @@ class ARViewController < UIViewController
   end
 
   def get_target_vec_location
-    curr_lon = self.parentViewController.current_location.coordinate.longitude
-    curr_lat = self.parentViewController.current_location.coordinate.latitude
-    dest_lon = self.parentViewController.destination.longitude
-    dest_lat = self.parentViewController.destination.latitude
+    curr_lon = parentViewController.current_location.coordinate.longitude
+    curr_lat = parentViewController.current_location.coordinate.latitude
+    dest_lon = parentViewController.destination.longitude
+    dest_lat = parentViewController.destination.latitude
     radian_lat = curr_lat * Math::PI / 180
     meters_per_deg_lat = 111132.92 - 559.82 * Math.cos(2 * radian_lat) + 1.175 * Math.cos(4 * radian_lat)
     meters_per_deg_lon = 111412.84 * Math.cos(radian_lat) - 93.5 * Math.cos(3 * radian_lat)
     x = (dest_lon - curr_lon) * meters_per_deg_lon
     z = (curr_lat - dest_lat) * meters_per_deg_lat
 
-    api_url = 'https://maps.googleapis.com/maps/api/elevation/'
-    api_key = 'AIzaSyB8MZxrd9TRDvGBrAWJnFEtbQtrzgT2h7I'
-    uri       = api_url + "json?locations=#{dest_lat},#{dest_lon}&key=#{api_key}"
+    uri       = @api_url + "json?locations=#{dest_lat},#{dest_lon}&key=#{@api_key}"
     url       = NSURL.URLWithString(uri)
     config    = NSURLSessionConfiguration.defaultSessionConfiguration
     session   = NSURLSession.sessionWithConfiguration(config)
@@ -84,7 +92,7 @@ class ARViewController < UIViewController
     data_task.resume
     while @destination_altitude.nil?
     end
-    y = @destination_altitude - self.parentViewController.current_location.altitude
+    y = @destination_altitude - parentViewController.current_location.altitude
     SCNVector3Make(x, y, z)
   end
 
@@ -96,19 +104,22 @@ class ARViewController < UIViewController
     end
   end
 
-
   # Called with every AR frame update
   def session(session, didUpdateFrame: frame)
     me = @scene_view.pointOfView.position
-    self.parentViewController.distance.text = "#{Math.sqrt((@target_pos.x - me.x)**2 + (@target_pos.z - me.z)**2).round}m away"
+    parentViewController.distance.text = "#{Math.sqrt((@target_pos.x - me.x)**2 + (@target_pos.z - me.z)**2).round}m away"
   end
 
-  # Called when the AR session is interrupted
+  # Called when the AR session interruption ends
   def sessionInterruptionEnded(session)
-    @scene_view.session.pause
-    @scene_view.pointOfView.childNodes[0].removeFromParentNode
-    @scene.rootNode.childNodes[0].removeFromParentNode
-    add_cones
+    pause_AR_session
     @scene_view.session.runWithConfiguration(@scene_config, options: ARSessionRunOptionResetTracking)
+    add_cones
+  end
+
+  def pause_AR_session
+    @scene_view.pointOfView.childNodes.each {|node| node.removeFromParentNode}
+    @scene.rootNode.childNodes.each {|node| node.removeFromParentNode}
+    @scene_view.session.pause
   end
 end
