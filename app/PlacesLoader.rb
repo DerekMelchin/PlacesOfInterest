@@ -17,14 +17,14 @@ class PlacesLoader
     config    = NSURLSessionConfiguration.defaultSessionConfiguration
     session   = NSURLSession.sessionWithConfiguration(config)
     completion_handler = lambda do |data, response, error|
-      if error.class != NilClass
+      if !error.nil?
         puts error
       elsif response.statusCode == 200
         error_ptr = Pointer.new(:object)
         response_object = NSJSONSerialization.JSONObjectWithData(data,
                                                                  options: NSJSONReadingAllowFragments,
                                                                  error: error_ptr)
-        if response_object.class == NilClass # An error occurred with previous line
+        if response_object.nil? # An error occurred with previous line
           error_handler(nil, error_ptr[0])
         elsif response_object.class != Hash
           return
