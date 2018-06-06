@@ -23,6 +23,7 @@ class ARViewController < UIViewController
     super
     @scene_view = ARSCNView.alloc.init
     @scene_view.autoenablesDefaultLighting = true
+    @scene_view.debugOptions = ARSCNDebugOptionShowWorldOrigin
     @scene_view.delegate = self
     @scene_config = ARWorldTrackingConfiguration.alloc.init
     @scene_config.worldAlignment = ARWorldAlignmentGravityAndHeading
@@ -93,6 +94,13 @@ class ARViewController < UIViewController
     while @destination_altitude.nil?
     end
     y = @destination_altitude - parentViewController.current_location.altitude
+    alert = UIAlertController.alertControllerWithTitle('Data',
+                                                       message: "Current: #{parentViewController.current_location.altitude.round} \n Destination: #{@destination_altitude.round} \n Y: #{y.round}",
+                                                       preferredStyle: UIAlertControllerStyleAlert)
+    action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
+                                           handler: nil)
+    alert.addAction(action)
+    presentViewController(alert, animated: true, completion: nil)
     SCNVector3Make(x, y, z)
   end
 

@@ -6,7 +6,7 @@ end
 
 class MasterViewController < UIViewController
   attr_accessor :map_controller, :AR_controller, :curr_location, :destination,
-                :distance, :message_box, :location_manager
+                :distance, :message_box, :location_manager, :previous_update_location
 
   def current_location
     @curr_location
@@ -133,8 +133,9 @@ class MasterViewController < UIViewController
     @curr_location = locations.last
     if @curr_location.horizontalAccuracy < 100
       @map_controller.map_camera.centerCoordinate = @curr_location.coordinate
-      if !@map_controller.started_loading_POIs || @curr_location.distanceFromLocation(locations[-2]) > 100
+      if !@map_controller.started_loading_POIs || @curr_location.distanceFromLocation(@previous_update_location) > 100
         @map_controller.started_loading_POIs = true
+        @previous_update_location = @curr_location
         @map_controller.loader.load_POIs(@map_controller, @curr_location, 1000)
       end
     end
