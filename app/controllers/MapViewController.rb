@@ -1,6 +1,5 @@
 class MapViewController < UIViewController
-  attr_accessor :location_manager, :region_radius, :started_loading_POIs,
-                :places, :did_follow_user, :map_camera, :loader
+  attr_accessor :region_radius, :started_loading_POIs, :places, :did_follow_user, :map_camera, :loader
 
   def loader
     @loader

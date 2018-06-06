@@ -8,16 +8,8 @@ class MasterViewController < UIViewController
   attr_accessor :map_controller, :AR_controller, :curr_location, :destination,
                 :distance, :message_box, :location_manager
 
-  def location_manager
-    @location_manager
-  end
-
   def current_location
     @curr_location
-  end
-
-  def current_location=(new_location)
-    @curr_location = new_location
   end
 
   def destination
@@ -26,10 +18,6 @@ class MasterViewController < UIViewController
 
   def destination=(new_location)
     @destination = new_location
-  end
-
-  def distance
-    @distance
   end
 
   def distance=(new_distance)
