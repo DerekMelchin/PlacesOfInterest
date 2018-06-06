@@ -41,6 +41,8 @@ class PlacesLoader
     unless places_dict.nil?
       places_array = places_dict['results']
       return if places_array.nil?
+      new_places = []
+      places_to_remove = []
       places_array.each do |place_dict|
         latitude    = place_dict['geometry']['location']['lat']
         longitude   = place_dict['geometry']['location']['lng']
@@ -48,8 +50,17 @@ class PlacesLoader
         name        = place_dict['name']
         address     = place_dict['vicinity']
         place       = Place.alloc.init(latitude, longitude, reference, name, address)
-        @caller.places << place
-        Dispatch::Queue.main.async {@caller.view.addAnnotation(place)}
+        new_places << place
+      end
+      @caller.places.each {|place| places_to_remove << place}
+      places_to_remove -= new_places
+      @caller.places -= places_to_remove
+      new_places -= @caller.places
+      @caller.places += new_places
+      Dispatch::Queue.main.async do
+        @caller.view.removeAnnotations(places_to_remove)
+        @caller.view.addAnnotations(new_places)
+        @caller.parentViewController.add_message_box('Start') unless @caller.parentViewController.destination.nil?
       end
     end
   end

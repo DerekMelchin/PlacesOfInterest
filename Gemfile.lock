@@ -96,6 +96,7 @@ GEM
     motion-provisioning (1.0.0)
       fastlane (~> 2.85)
       highline (>= 1.7.2, < 2.0.0)
+    motion-set (0.1.0)
     multi_json (1.13.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
@@ -151,6 +152,7 @@ PLATFORMS
 
 DEPENDENCIES
   motion-provisioning
+  motion-set
   rake
 
 BUNDLED WITH

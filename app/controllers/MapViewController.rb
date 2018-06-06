@@ -13,6 +13,10 @@ class MapViewController < UIViewController
     @started_loading_POIs = new_value
   end
 
+  def places
+    @places
+  end
+
   def init
     @region_radius = 1000
     @started_loading_POIs = false
@@ -45,7 +49,7 @@ class MapViewController < UIViewController
     end
     if parentViewController.destination.nil?
       alert = UIAlertController.alertControllerWithTitle('Out of Range',
-                                                         message: 'The place of interest needs to be within 1km to enable AR.',
+                                                         message: 'You need to be closer to enable AR.',
                                                          preferredStyle: UIAlertControllerStyleAlert)
       action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
                                              handler: nil)
