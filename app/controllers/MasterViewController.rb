@@ -39,11 +39,14 @@ class MasterViewController < UIViewController
 
   def viewDidLoad
     super
+    view.backgroundColor = UIColor.whiteColor
     @map_controller = MapViewController.alloc.init
     self.addChildViewController(@map_controller)
     self.view.addSubview(@map_controller.view)
-    @map_controller.view.frame = [[0, 0], [UIScreen.mainScreen.bounds.size.width,
-                                           UIScreen.mainScreen.bounds.size.height]]
+    @map_controller.view.translatesAutoresizingMaskIntoConstraints = false
+    @map_controller.view.widthAnchor.constraintEqualToConstant(UIScreen.mainScreen.bounds.size.width).active = true
+    @map_controller.view.topAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.topAnchor).active = true
+    @map_controller.view.bottomAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.bottomAnchor).active = true
     @map_controller.didMoveToParentViewController(self)
     @AR_controller = ARViewController.alloc.init
     self.addChildViewController(@AR_controller)
@@ -69,6 +72,10 @@ class MasterViewController < UIViewController
     @AR_controller.willMoveToParentViewController(nil)
     @AR_controller.view.removeFromSuperview
     self.view.addSubview(@map_controller.view)
+    @map_controller.view.translatesAutoresizingMaskIntoConstraints = false
+    @map_controller.view.widthAnchor.constraintEqualToConstant(UIScreen.mainScreen.bounds.size.width).active = true
+    @map_controller.view.topAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.topAnchor).active = true
+    @map_controller.view.bottomAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.bottomAnchor).active = true
     @map_controller.didMoveToParentViewController(self)
     add_message_box('Start') unless @destination.nil?
   end
@@ -77,8 +84,10 @@ class MasterViewController < UIViewController
     @map_controller.willMoveToParentViewController(nil)
     @map_controller.view.removeFromSuperview
     self.view.addSubview(@AR_controller.view)
-    @AR_controller.view.frame = [[0, 0], [UIScreen.mainScreen.bounds.size.width,
-                                          UIScreen.mainScreen.bounds.size.height]]
+    @AR_controller.view.translatesAutoresizingMaskIntoConstraints = false
+    @AR_controller.view.widthAnchor.constraintEqualToConstant(UIScreen.mainScreen.bounds.size.width).active = true
+    @AR_controller.view.topAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.topAnchor).active = true
+    @AR_controller.view.bottomAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.bottomAnchor).active = true
     @AR_controller.didMoveToParentViewController(self)
     add_message_box('Exit')
     @AR_controller.scene_view.session.runWithConfiguration(@AR_controller.scene_config,
