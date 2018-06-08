@@ -8,25 +8,11 @@ class MasterViewController < UIViewController
   attr_accessor :map_controller, :AR_controller, :curr_location, :destination,
                 :distance, :message_box, :location_manager, :previous_update_location
 
-  def current_location
-    @curr_location
-  end
-
-  def destination
-    @destination
-  end
-
-  def destination=(new_location)
-    @destination = new_location
-  end
-
-  def distance=(new_distance)
-    @distance = new_distance
-  end
-
-  def message_box
-    @message_box
-  end
+  def current_location; @curr_location; end
+  def destination; @destination; end
+  def destination=(new_location); @destination = new_location; end
+  def distance=(new_distance); @distance = new_distance; end
+  def message_box; @message_box; end
 
   def init
     @location_manager = CLLocationManager.alloc.init

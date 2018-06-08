@@ -1,17 +1,9 @@
 class ARViewController < UIViewController
   attr_accessor :scene_view, :target_pos, :destination_altitude, :scene_config, :scene, :api_url, :api_key
 
-  def scene_view
-    @scene_view
-  end
-
-  def scene_config
-    @scene_config
-  end
-
-  def scene
-    @scene
-  end
+  def scene_view; @scene_view; end
+  def scene_config; @scene_config; end
+  def scene; @scene; end
 
   def init
     @api_url = 'https://maps.googleapis.com/maps/api/elevation/'
