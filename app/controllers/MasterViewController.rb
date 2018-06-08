@@ -91,9 +91,13 @@ class MasterViewController < UIViewController
     button_width                 = button_str == 'Exit' ? 50 : 60
     left_padding                 = 20
     vert_padding                 = 5
-    message_box_frame            = [[0, UIScreen.mainScreen.bounds.size.height - height],
-                                    [UIScreen.mainScreen.bounds.size.width, height]]
-    @message_box                 = UIView.alloc.initWithFrame(message_box_frame)
+
+    @message_box = UIView.alloc.init
+    @message_box.translatesAutoresizingMaskIntoConstraints = false
+    @message_box.widthAnchor.constraintEqualToConstant(UIScreen.mainScreen.bounds.size.width).active = true
+    @message_box.heightAnchor.constraintEqualToConstant(height).active = true
+    view.addSubview(@message_box)
+    @message_box.bottomAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.bottomAnchor).active = true
     @message_box.backgroundColor = UIColor.alloc.initWithRed(0, green: 0.8, blue: 0.8, alpha: 0.9)
     button_frame                 = [[UIScreen.mainScreen.bounds.size.width - button_width, 0],
                                     [button_width, height]]
@@ -125,7 +129,6 @@ class MasterViewController < UIViewController
     @distance.frame     = [[left_padding, height / 2 - vert_padding],
                            [UIScreen.mainScreen.bounds.size.width - 2 * left_padding - button_width, height / 2]]
     @message_box.addSubview(@distance)
-    view.addSubview(@message_box)
   end
 
   # Called when the user moves locations
