@@ -54,6 +54,23 @@ class MapViewController < UIViewController
     parentViewController.message_box.removeFromSuperview unless parentViewController.message_box.nil?
   end
 
+  def mapView(mapView, didAddAnnotationViews: views)
+    views.each do |view|
+      unless view.class.to_s == 'MKModernUserLocationView'
+        view.markerTintColor = UIColor.greenColor
+        view.displayPriority = MKFeatureDisplayPriorityRequired
+        view.titleVisibility = MKFeatureVisibilityVisible
+      end
+    end
+  end
+
+  # def mapView(mapView, viewForAnnotation: annotation)
+  #   return nil if annotation.class.to_s == 'MKModernUserLocation'
+  #   an_view = MKPinAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier: nil)
+  #   an_view.pinTintColor = an_view.redPinColor
+  #   return an_view
+  # end
+
   def mapViewDidFinishLoadingMap(mapView)
     view.setUserTrackingMode(MKUserTrackingModeFollowWithHeading, animated: false)
   end
