@@ -73,7 +73,8 @@ Motion::Project::App.setup do |app|
   # ===========================================================================================
   # 5. If you need to reference any additional iOS libraries, use the config array below.
   # ===========================================================================================
-  app.frameworks = %w(MapKit CoreMotion CoreLocation Foundation Dispatch ARKit SceneKit)
+  app.frameworks << 'MapKit' << 'CoreMotion' << 'CoreLocation' << 'Foundation' << 'Dispatch'
+  app.frameworks << 'ARKit' << 'SceneKit'
 
   # reasonable defaults
   app.device_family = [:iphone, :ipad]
