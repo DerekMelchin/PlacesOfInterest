@@ -17,7 +17,7 @@ class MapViewController < UIViewController
     super
     self.view = MKMapView.alloc.init
     view.showsUserLocation = true
-    view.rotateEnabled     = true
+    view.rotateEnabled     = false
     view.scrollEnabled     = false
     view.showsCompass      = false
     view.delegate          = self
@@ -28,7 +28,8 @@ class MapViewController < UIViewController
 
   # Called when a map annotation is selected
   def mapView(mapView, didSelectAnnotationView: view)
-    return if view.class.to_s == 'NSKVONotifying_MKModernUserLocationView'
+    return if view.annotation.is_a?(MKUserLocation)
+    view.pinTintColor = UIColor.colorWithRed(0, green: 1, blue: 0, alpha: 0.8)
     parentViewController.destination = nil
     @places.each do |place|
       if place.longitude == view.coordinate.longitude && place.latitude == view.coordinate.latitude
@@ -40,8 +41,7 @@ class MapViewController < UIViewController
       alert = UIAlertController.alertControllerWithTitle('Out of Range',
                                                          message: 'You need to be closer to enable AR.',
                                                          preferredStyle: UIAlertControllerStyleAlert)
-      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
-                                             handler: nil)
+      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault, handler: nil)
       alert.addAction(action)
       presentViewController(alert, animated: true, completion: nil)
       return
@@ -51,25 +51,16 @@ class MapViewController < UIViewController
 
   # Called when a map annotation is deselected
   def mapView(mapView, didDeselectAnnotationView: view)
+    view.pinTintColor = UIColor.alloc.initWithRed(0, green: 0.8, blue: 0.8, alpha: 0.9)
     parentViewController.message_box.removeFromSuperview unless parentViewController.message_box.nil?
   end
 
-  def mapView(mapView, didAddAnnotationViews: views)
-    views.each do |view|
-      unless view.class.to_s == 'MKModernUserLocationView'
-        view.markerTintColor = UIColor.greenColor
-        view.displayPriority = MKFeatureDisplayPriorityRequired
-        view.titleVisibility = MKFeatureVisibilityVisible
-      end
-    end
+  def mapView(mapView, viewForAnnotation: view)
+    return nil if view.is_a?(MKUserLocation)
+    an_view = MKPinAnnotationView.alloc.initWithAnnotation(view, reuseIdentifier: nil)
+    an_view.pinTintColor = UIColor.alloc.initWithRed(0, green: 0.8, blue: 0.8, alpha: 0.9)
+    an_view
   end
-
-  # def mapView(mapView, viewForAnnotation: annotation)
-  #   return nil if annotation.class.to_s == 'MKModernUserLocation'
-  #   an_view = MKPinAnnotationView.alloc.initWithAnnotation(annotation, reuseIdentifier: nil)
-  #   an_view.pinTintColor = an_view.redPinColor
-  #   return an_view
-  # end
 
   def mapViewDidFinishLoadingMap(mapView)
     view.setUserTrackingMode(MKUserTrackingModeFollowWithHeading, animated: false)
