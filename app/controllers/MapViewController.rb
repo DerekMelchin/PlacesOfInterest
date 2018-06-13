@@ -63,7 +63,7 @@ class MapViewController < UIViewController
     an_view
   end
 
-  def mapViewDidFinishLoadingMap(mapView)
+  def mapViewDidFinishLoadingMap(_)
     view.setUserTrackingMode(MKUserTrackingModeFollowWithHeading, animated: false)
   end
 end

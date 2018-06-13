@@ -88,7 +88,7 @@ class ARViewController < UIViewController
     SCNVector3Make(x, y, z)
   end
 
-  def error_handler(dict, error)
+  def error_handler(dict, _)
     unless dict.nil?
       results = dict['results'][0]
       return if results.nil?
@@ -97,13 +97,13 @@ class ARViewController < UIViewController
   end
 
   # Called with every AR frame update
-  def session(session, didUpdateFrame: frame)
+  def session(_, didUpdateFrame: _)
     me = @scene_view.pointOfView.position
     parentViewController.distance.text = "#{Math.sqrt((@target_pos.x - me.x)**2 + (@target_pos.z - me.z)**2).round}m away"
   end
 
   # Called when the AR session interruption ends
-  def sessionInterruptionEnded(session)
+  def sessionInterruptionEnded(_)
     pause_AR_session
     @scene_view.session.runWithConfiguration(@scene_config, options: ARSessionRunOptionResetTracking)
     add_cones

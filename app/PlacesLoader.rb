@@ -37,7 +37,7 @@ class PlacesLoader
     data_task.resume
   end
 
-  def error_handler(places_dict, error, radius)
+  def error_handler(places_dict, _, radius)
     unless places_dict.nil?
       places_array = places_dict['results']
       return if places_array.nil?

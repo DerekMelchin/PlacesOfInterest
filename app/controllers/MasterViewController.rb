@@ -127,7 +127,7 @@ class MasterViewController < UIViewController
   end
 
   # Called when the user moves locations
-  def locationManager(manager, didUpdateLocations: locations)
+  def locationManager(_, didUpdateLocations: locations)
     @curr_location = locations.last
     if @curr_location.horizontalAccuracy < 100
       @map_controller.map_camera.centerCoordinate = @curr_location.coordinate
@@ -145,7 +145,7 @@ class MasterViewController < UIViewController
   end
 
   # Called when the user touches the screen
-  def touchesEnded(touches, withEvent: event)
+  def touchesEnded(_, withEvent: event)
     display_AR if event.touchesForView(@start_button)
     display_map if event.touchesForView(@exit_button)
   end
