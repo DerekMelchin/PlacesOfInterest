@@ -1,19 +1,12 @@
 class Place
-  attr_accessor :reference, :place_name, :address, :phone_number, :website, :location,
-                :latitude, :longitude
+  attr_accessor :latitude, :longitude, :location, :title
 
-  def title; @place_name; end
   def coordinate; @location.coordinate; end
-  def location; @location; end
-  def latitude; @latitude; end
-  def longitude; @longitude; end
 
-  def init(latitude, longitude, reference, name, address)
+  def init(latitude, longitude, name)
     @latitude   = latitude
     @longitude  = longitude
-    @place_name = name
-    @reference  = reference
-    @address    = address
+    @title      = name
     @location   = CLLocation.alloc.initWithLatitude(latitude, longitude: longitude)
     self
   end

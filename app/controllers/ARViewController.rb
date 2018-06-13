@@ -1,9 +1,5 @@
 class ARViewController < UIViewController
-  attr_accessor :scene_view, :target_pos, :destination_altitude, :scene_config, :scene, :api_url, :api_key
-
-  def scene_view; @scene_view; end
-  def scene_config; @scene_config; end
-  def scene; @scene; end
+  attr_accessor :scene_view, :scene_config
 
   def init
     @api_url = 'https://maps.googleapis.com/maps/api/elevation/'
@@ -49,8 +45,8 @@ class ARViewController < UIViewController
   end
 
   def get_target_vec_location
-    curr_lon = parentViewController.current_location.coordinate.longitude
-    curr_lat = parentViewController.current_location.coordinate.latitude
+    curr_lon = parentViewController.curr_location.coordinate.longitude
+    curr_lat = parentViewController.curr_location.coordinate.latitude
     dest_lon = parentViewController.destination.longitude
     dest_lat = parentViewController.destination.latitude
     radian_lat = curr_lat * Math::PI / 180
@@ -84,7 +80,7 @@ class ARViewController < UIViewController
     data_task.resume
     while @destination_altitude.nil?
     end
-    y = @destination_altitude - parentViewController.current_location.altitude
+    y = @destination_altitude - parentViewController.curr_location.altitude
     SCNVector3Make(x, y, z)
   end
 

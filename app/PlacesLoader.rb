@@ -1,6 +1,4 @@
 class PlacesLoader
-  attr_accessor :api_url, :api_key, :caller
-
   def init
     @api_url = 'https://maps.googleapis.com/maps/api/place/'
     @api_key = 'AIzaSyB8MZxrd9TRDvGBrAWJnFEtbQtrzgT2h7I'
@@ -54,11 +52,9 @@ class PlacesLoader
       places_array.each do |place_dict|
         latitude    = place_dict['geometry']['location']['lat']
         longitude   = place_dict['geometry']['location']['lng']
-        reference   = place_dict['reference']
         name        = place_dict['name']
-        address     = place_dict['vicinity']
-        place       = Place.alloc.init(latitude, longitude, reference, name, address)
-        if @caller.parentViewController.current_location.distanceFromLocation(place.location) < radius
+        place       = Place.alloc.init(latitude, longitude, name)
+        if @caller.parentViewController.curr_location.distanceFromLocation(place.location) < radius
           new_places << place
         end
       end

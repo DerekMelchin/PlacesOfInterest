@@ -1,13 +1,7 @@
 class MapViewController < UIViewController
-  attr_accessor :region_radius, :started_loading_POIs, :places, :did_follow_user, :map_camera, :loader
-
-  def loader; @loader; end
-  def started_loading_POIs; @started_loading_POIs; end
-  def started_loading_POIs=(new_value); @started_loading_POIs = new_value; end
-  def places; @places; end
+  attr_accessor :started_loading_POIs, :places, :map_camera, :loader
 
   def init
-    @region_radius = 1000
     @started_loading_POIs = false
     @places = []
     super
