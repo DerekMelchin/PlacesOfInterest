@@ -25,11 +25,11 @@ class PlacesLoader
                                                                  options: NSJSONReadingAllowFragments,
                                                                  error: error_ptr)
         if response_object.nil? # An error occurred with previous line
-          error_handler(nil, error_ptr[0])
+          error_handler(nil, error_ptr[0], radius)
         elsif response_object.class != Hash
           return
         else
-          error_handler(response_object, nil)
+          error_handler(response_object, nil, radius)
         end
       end
     end
@@ -37,7 +37,7 @@ class PlacesLoader
     data_task.resume
   end
 
-  def error_handler(places_dict, error)
+  def error_handler(places_dict, error, radius)
     unless places_dict.nil?
       places_array = places_dict['results']
       return if places_array.nil?
@@ -50,7 +50,9 @@ class PlacesLoader
         name        = place_dict['name']
         address     = place_dict['vicinity']
         place       = Place.alloc.init(latitude, longitude, reference, name, address)
-        new_places << place
+        if @caller.parentViewController.current_location.distanceFromLocation(place.location) < radius
+          new_places << place
+        end
       end
       @caller.places.each {|place| places_to_remove << place}
       places_to_remove -= new_places

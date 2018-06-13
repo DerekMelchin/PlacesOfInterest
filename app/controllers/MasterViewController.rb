@@ -46,8 +46,7 @@ class MasterViewController < UIViewController
       alert = UIAlertController.alertControllerWithTitle('Heading Unavailable',
                                                          message: 'Sorry, the AR won\'t work for your device.',
                                                          preferredStyle: UIAlertControllerStyleAlert)
-      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault,
-                                             handler: nil)
+      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault, handler: nil)
       alert.addAction(action)
       self.presentViewController(alert, animated: true, completion: nil)
     end
