@@ -51,6 +51,7 @@ class MapViewController < UIViewController
 
   # Called when a map annotation is deselected
   def mapView(mapView, didDeselectAnnotationView: view)
+    return if view.annotation.is_a?(MKUserLocation)
     view.pinTintColor = UIColor.alloc.initWithRed(0, green: 0.8, blue: 0.8, alpha: 0.9)
     parentViewController.message_box.removeFromSuperview unless parentViewController.message_box.nil?
   end

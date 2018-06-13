@@ -31,6 +31,7 @@ class MasterViewController < UIViewController
     self.view.addSubview(@map_controller.view)
     @map_controller.view.translatesAutoresizingMaskIntoConstraints = false
     @map_controller.view.widthAnchor.constraintEqualToConstant(UIScreen.mainScreen.bounds.size.width).active = true
+    @map_controller.view.leftAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.leftAnchor).active = true
     @map_controller.view.topAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.topAnchor).active = true
     @map_controller.view.bottomAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.bottomAnchor).active = true
     @map_controller.didMoveToParentViewController(self)
