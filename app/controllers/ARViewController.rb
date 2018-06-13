@@ -96,13 +96,11 @@ class ARViewController < UIViewController
     end
   end
 
-  # Called with every AR frame update
   def session(_, didUpdateFrame: _)
     me = @scene_view.pointOfView.position
     parentViewController.distance.text = "#{Math.sqrt((@target_pos.x - me.x)**2 + (@target_pos.z - me.z)**2).round}m away"
   end
 
-  # Called when the AR session interruption ends
   def sessionInterruptionEnded(_)
     pause_AR_session
     @scene_view.session.runWithConfiguration(@scene_config, options: ARSessionRunOptionResetTracking)

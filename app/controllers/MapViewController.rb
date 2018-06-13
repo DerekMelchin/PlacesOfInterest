@@ -26,7 +26,6 @@ class MapViewController < UIViewController
     @loader = PlacesLoader.alloc.init
   end
 
-  # Called when a map annotation is selected
   def mapView(mapView, didSelectAnnotationView: view)
     return if view.annotation.is_a?(MKUserLocation)
     view.pinTintColor = UIColor.colorWithRed(0, green: 1, blue: 0, alpha: 0.8)
@@ -49,7 +48,6 @@ class MapViewController < UIViewController
     parentViewController.add_message_box('Start')
   end
 
-  # Called when a map annotation is deselected
   def mapView(mapView, didDeselectAnnotationView: view)
     return if view.annotation.is_a?(MKUserLocation)
     view.pinTintColor = UIColor.blackColor

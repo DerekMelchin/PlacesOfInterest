@@ -18,7 +18,7 @@ class MasterViewController < UIViewController
     @location_manager = CLLocationManager.alloc.init
     @location_manager.startUpdatingLocation
     @location_manager.delegate = self
-    @location_manager.desiredAccuracy = 1000 #kCLLocationAccuracyNearestTenMeters
+    @location_manager.desiredAccuracy = 1000
     @location_manager.requestAlwaysAuthorization
     super
   end
@@ -126,7 +126,6 @@ class MasterViewController < UIViewController
     @message_box.addSubview(@distance)
   end
 
-  # Called when the user moves locations
   def locationManager(_, didUpdateLocations: locations)
     @curr_location = locations.last
     if @curr_location.horizontalAccuracy < 100
@@ -144,7 +143,6 @@ class MasterViewController < UIViewController
     end
   end
 
-  # Called when the user touches the screen
   def touchesEnded(_, withEvent: event)
     display_AR if event.touchesForView(@start_button)
     display_map if event.touchesForView(@exit_button)
