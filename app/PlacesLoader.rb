@@ -37,7 +37,15 @@ class PlacesLoader
     data_task.resume
   end
 
-  def error_handler(places_dict, _, radius)
+  def error_handler(places_dict, error, radius)
+    unless error.nil?
+      alert = UIAlertController.alertControllerWithTitle('Error',
+                                                         message: "Loading places of interest failed: #{error}",
+                                                         preferredStyle: UIAlertControllerStyleAlert)
+      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault, handler: nil)
+      alert.addAction(action)
+      self.presentViewController(alert, animated: true, completion: nil)
+    end
     unless places_dict.nil?
       places_array = places_dict['results']
       return if places_array.nil?
