@@ -93,13 +93,13 @@ class MasterViewController < UIViewController
     @message_box.heightAnchor.constraintEqualToConstant(height).active = true
     view.addSubview(@message_box)
     @message_box.bottomAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.bottomAnchor).active = true
-    @message_box.backgroundColor = UIColor.alloc.initWithRed(0, green: 0.8, blue: 0.8, alpha: 0.9)
+    @message_box.backgroundColor = UIColor.alloc.initWithRed(1, green: 1, blue: 1, alpha: 0.9)
     button_frame                 = [[UIScreen.mainScreen.bounds.size.width - button_width, 0],
                                     [button_width, height]]
     button_label                 = UILabel.new
     button_label.font            = UIFont.systemFontOfSize(18)
     button_label.text            = button_str
-    button_label.textColor       = UIColor.alloc.initWithRed(1, green: 1, blue: 1, alpha: 1.0)
+    button_label.textColor       = UIColor.alloc.initWithRed(0, green: 0.8, blue: 0.8, alpha: 0.9)
     button_label.frame           = [[0, 0], [button_width, height]]
     if button_str == 'Exit'
       @exit_button = UIView.alloc.initWithFrame(button_frame)
