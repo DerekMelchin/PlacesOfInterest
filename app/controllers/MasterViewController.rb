@@ -21,13 +21,7 @@ class MasterViewController < UIViewController
     view.backgroundColor = UIColor.whiteColor
     @map_controller = MapViewController.alloc.init
     self.addChildViewController(@map_controller)
-    self.view.addSubview(@map_controller.view)
-    @map_controller.view.translatesAutoresizingMaskIntoConstraints = false
-    @map_controller.view.leftAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.leftAnchor).active = true
-    @map_controller.view.rightAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.rightAnchor).active = true
-    @map_controller.view.topAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.topAnchor).active = true
-    @map_controller.view.bottomAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.bottomAnchor).active = true
-    @map_controller.didMoveToParentViewController(self)
+    display_map
     @AR_controller = ARViewController.alloc.init
     self.addChildViewController(@AR_controller)
     Dispatch::Queue.main.after(3) { check_heading }
@@ -47,12 +41,15 @@ class MasterViewController < UIViewController
   end
 
   def display_map
-    @AR_controller.pause_AR_session
-    @AR_controller.willMoveToParentViewController(nil)
-    @AR_controller.view.removeFromSuperview
+    unless @AR_controller.nil?
+      @AR_controller.pause_AR_session
+      @AR_controller.willMoveToParentViewController(nil)
+      @AR_controller.view.removeFromSuperview
+    end
     self.view.addSubview(@map_controller.view)
     @map_controller.view.translatesAutoresizingMaskIntoConstraints = false
-    @map_controller.view.widthAnchor.constraintEqualToConstant(UIScreen.mainScreen.bounds.size.width).active = true
+    @map_controller.view.leftAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.leftAnchor).active = true
+    @map_controller.view.rightAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.rightAnchor).active = true
     @map_controller.view.topAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.topAnchor).active = true
     @map_controller.view.bottomAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.bottomAnchor).active = true
     @map_controller.didMoveToParentViewController(self)
