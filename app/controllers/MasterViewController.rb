@@ -104,7 +104,7 @@ class MasterViewController < UIViewController
     name           = UILabel.new
     name.font      = UIFont.systemFontOfSize(16)
     name.text      = "#{@destination.title}"
-    name.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
+    name.textColor = UIColor.blackColor
     name.frame     = [[left_padding, vert_padding],
                       [UIScreen.mainScreen.bounds.size.width - 2 * left_padding - button_width, height / 2]]
     @message_box.addSubview(name)

@@ -58,7 +58,7 @@ class PlacesLoader
         longitude   = place_dict['geometry']['location']['lng']
         name        = place_dict['name']
         place       = Place.alloc.init(latitude, longitude, name)
-        if @map_controller.parentViewController.curr_location.distanceFromLocation(place.location) < radius
+        if @map_controller.parentViewController.curr_location.distanceFromLocation(place.location) <= radius
           new_places << place
         end
       end
