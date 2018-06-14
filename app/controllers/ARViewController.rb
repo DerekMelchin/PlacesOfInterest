@@ -29,6 +29,7 @@ class ARViewController < UIViewController
     guide_geometry.materials = [guide_material]
     guide = SCNNode.nodeWithGeometry(guide_geometry)
     guide.position = SCNVector3Make(0, 0.3, -1)
+
     target_geometry = SCNPyramid.pyramidWithWidth(2, height: 6, length: 2)
     target_material = SCNMaterial.material
     target_material.diffuse.contents = NSColor.colorWithRed(0, green: 1, blue: 0, alpha: 0.8)
@@ -36,9 +37,11 @@ class ARViewController < UIViewController
     target_geometry.materials = [target_material]
     target = SCNNode.nodeWithGeometry(target_geometry)
     target.position = @target_pos = get_target_vec_location
+
     constraint = SCNLookAtConstraint.lookAtConstraintWithTarget(target)
     constraint.localFront = SCNVector3Make(0, 0.2, 0)
     guide.constraints = [constraint]
+
     @scene.rootNode.addChildNode(target)
     @scene_view.pointOfView.addChildNode(guide)
     @scene_view.scene = @scene
@@ -49,6 +52,7 @@ class ARViewController < UIViewController
     curr_lat = parentViewController.curr_location.coordinate.latitude
     dest_lon = parentViewController.destination.longitude
     dest_lat = parentViewController.destination.latitude
+
     radian_lat = curr_lat * Math::PI / 180
     meters_per_deg_lat = 111132.92 - 559.82 * Math.cos(2 * radian_lat) + 1.175 * Math.cos(4 * radian_lat)
     meters_per_deg_lon = 111412.84 * Math.cos(radian_lat) - 93.5 * Math.cos(3 * radian_lat)
@@ -59,6 +63,7 @@ class ARViewController < UIViewController
     url       = NSURL.URLWithString(uri)
     config    = NSURLSessionConfiguration.defaultSessionConfiguration
     session   = NSURLSession.sessionWithConfiguration(config)
+
     completion_handler = lambda do |data, response, error|
       if !error.nil?
         puts error
@@ -76,10 +81,10 @@ class ARViewController < UIViewController
         end
       end
     end
+
     data_task = session.dataTaskWithURL(url, completionHandler: completion_handler)
     data_task.resume
-    while @destination_altitude.nil?
-    end
+    while @destination_altitude.nil?; end
     y = @destination_altitude - parentViewController.curr_location.altitude
     SCNVector3Make(x, y, z)
   end

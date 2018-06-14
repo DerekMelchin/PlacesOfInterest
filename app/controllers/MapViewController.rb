@@ -22,7 +22,7 @@ class MapViewController < UIViewController
 
   def mapView(mapView, didSelectAnnotationView: view)
     return if view.annotation.is_a?(MKUserLocation)
-    view.pinTintColor = UIColor.colorWithRed(0, green: 1, blue: 0, alpha: 0.8)
+    view.pinTintColor = UIColor.greenColor
     parentViewController.destination = nil
     @places.each do |place|
       if place.longitude == view.coordinate.longitude && place.latitude == view.coordinate.latitude

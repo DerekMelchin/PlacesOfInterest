@@ -5,8 +5,8 @@ class PlacesLoader
     super
   end
 
-  def load_POIs(caller, location, radius = 30)
-    @caller   = caller
+  def load_POIs(map_controller, location, radius = 30)
+    @map_controller = map_controller
     latitude  = location.coordinate.latitude
     longitude = location.coordinate.longitude
     uri       = @api_url + "nearbysearch/json?location=#{latitude},#{longitude}"\
@@ -14,6 +14,7 @@ class PlacesLoader
     url       = NSURL.URLWithString(uri)
     config    = NSURLSessionConfiguration.defaultSessionConfiguration
     session   = NSURLSession.sessionWithConfiguration(config)
+
     completion_handler = lambda do |data, response, error|
       if !error.nil?
         puts error
@@ -31,6 +32,7 @@ class PlacesLoader
         end
       end
     end
+
     data_task = session.dataTaskWithURL(url, completionHandler: completion_handler)
     data_task.resume
   end
@@ -44,29 +46,35 @@ class PlacesLoader
       alert.addAction(action)
       self.presentViewController(alert, animated: true, completion: nil)
     end
+
     unless places_dict.nil?
       places_array = places_dict['results']
       return if places_array.nil?
       new_places = []
       places_to_remove = []
+
       places_array.each do |place_dict|
         latitude    = place_dict['geometry']['location']['lat']
         longitude   = place_dict['geometry']['location']['lng']
         name        = place_dict['name']
         place       = Place.alloc.init(latitude, longitude, name)
-        if @caller.parentViewController.curr_location.distanceFromLocation(place.location) < radius
+        if @map_controller.parentViewController.curr_location.distanceFromLocation(place.location) < radius
           new_places << place
         end
       end
-      @caller.places.each {|place| places_to_remove << place}
-      places_to_remove -= new_places
-      @caller.places -= places_to_remove
-      new_places -= @caller.places
-      @caller.places += new_places
+
+      @map_controller.places.each {|place| places_to_remove << place}
+      places_to_remove       -= new_places
+      @map_controller.places -= places_to_remove
+      new_places             -= @map_controller.places
+      @map_controller.places += new_places
+
       Dispatch::Queue.main.async do
-        @caller.view.removeAnnotations(places_to_remove)
-        @caller.view.addAnnotations(new_places)
-        @caller.parentViewController.add_message_box('Start') unless @caller.parentViewController.destination.nil?
+        @map_controller.view.removeAnnotations(places_to_remove)
+        @map_controller.view.addAnnotations(new_places)
+        unless @map_controller.parentViewController.destination.nil?
+          @map_controller.parentViewController.add_message_box('Start')
+        end
       end
     end
   end

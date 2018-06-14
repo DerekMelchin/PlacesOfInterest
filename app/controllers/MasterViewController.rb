@@ -75,25 +75,25 @@ class MasterViewController < UIViewController
   end
 
   def add_message_box(button_str)
-    height                       = 70
-    button_width                 = button_str == 'Exit' ? 50 : 60
-    left_padding                 = 20
-    vert_padding                 = 5
+    height       = 70
+    button_width = button_str == 'Exit' ? 50 : 60
+    left_padding = 20
+    vert_padding = 5
 
     @message_box = UIView.alloc.init
+    view.addSubview(@message_box)
     @message_box.translatesAutoresizingMaskIntoConstraints = false
     @message_box.widthAnchor.constraintEqualToConstant(UIScreen.mainScreen.bounds.size.width).active = true
     @message_box.heightAnchor.constraintEqualToConstant(height).active = true
-    view.addSubview(@message_box)
     @message_box.bottomAnchor.constraintEqualToAnchor(view.safeAreaLayoutGuide.bottomAnchor).active = true
     @message_box.backgroundColor = UIColor.alloc.initWithRed(1, green: 1, blue: 1, alpha: 0.9)
-    button_frame                 = [[UIScreen.mainScreen.bounds.size.width - button_width, 0],
-                                    [button_width, height]]
-    button_label                 = UILabel.new
-    button_label.font            = UIFont.systemFontOfSize(18)
-    button_label.text            = button_str
-    button_label.textColor       = UIColor.greenColor
-    button_label.frame           = [[0, 0], [button_width, height]]
+
+    button_frame           = [[UIScreen.mainScreen.bounds.size.width - button_width, 0], [button_width, height]]
+    button_label           = UILabel.new
+    button_label.font      = UIFont.systemFontOfSize(18)
+    button_label.text      = button_str
+    button_label.textColor = UIColor.greenColor
+    button_label.frame     = [[0, 0], [button_width, height]]
     if button_str == 'Exit'
       @exit_button = UIView.alloc.initWithFrame(button_frame)
       @exit_button.addSubview(button_label)
@@ -103,13 +103,15 @@ class MasterViewController < UIViewController
       @start_button.addSubview(button_label)
       @message_box.addSubview(@start_button)
     end
-    name                = UILabel.new
-    name.font           = UIFont.systemFontOfSize(16)
-    name.text           = "#{@destination.title}"
-    name.textColor      = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
-    name.frame          = [[left_padding, vert_padding],
-                           [UIScreen.mainScreen.bounds.size.width - 2 * left_padding - button_width, height / 2]]
+
+    name           = UILabel.new
+    name.font      = UIFont.systemFontOfSize(16)
+    name.text      = "#{@destination.title}"
+    name.textColor = UIColor.alloc.initWithRed(0, green: 0, blue: 0, alpha: 1)
+    name.frame     = [[left_padding, vert_padding],
+                      [UIScreen.mainScreen.bounds.size.width - 2 * left_padding - button_width, height / 2]]
     @message_box.addSubview(name)
+
     @distance           = UILabel.new
     @distance.font      = UIFont.systemFontOfSize(18)
     @distance.text      = "#{@curr_location.distanceFromLocation(@destination.location).round}m away"
@@ -130,7 +132,7 @@ class MasterViewController < UIViewController
       end
     end
     self.view.subviews.each do |view|
-      if view.class.to_s == 'MKMapView' && !@distance.nil?
+      if view.is_a?(MKMapView) && !@distance.nil?
         @distance.text = "#{@curr_location.distanceFromLocation(@destination.location).round}m away"
       end
     end
