@@ -11,7 +11,7 @@ class MasterViewController < UIViewController
     @location_manager = CLLocationManager.alloc.init
     @location_manager.startUpdatingLocation
     @location_manager.delegate = self
-    @location_manager.desiredAccuracy = 1000
+    @location_manager.desiredAccuracy = KCLLocationAccuracyBestForNavigation
     @location_manager.requestAlwaysAuthorization
     super
   end
