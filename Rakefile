@@ -26,8 +26,23 @@ Motion::Project::App.setup do |app|
   # version for your app
   app.version = '1.0.0'
 
-
   app.identifier = 'com.wndx.POIapp'
+
+  if app.hockeyapp?
+    app.hockeyapp do
+      app.codesign_certificate = MotionProvisioning.certificate(
+          type: :development,
+          platform: :ios)
+
+      app.provisioning_profile = MotionProvisioning.profile(
+          bundle_identifier: app.identifier,
+          app_name: app.name,
+          platform: :ios,
+          type: :development)
+      app.entitlements['get-task-allow'] = false
+      set :api_token, '79f41cba216c4eb9af10df52dcc648e0'
+    end
+  end
 
   app.development do
     app.codesign_certificate = MotionProvisioning.certificate(
