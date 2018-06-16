@@ -72,6 +72,10 @@ class PlacesLoader
       Dispatch::Queue.main.async do
         @map_controller.view.removeAnnotations(places_to_remove)
         @map_controller.view.addAnnotations(new_places)
+        unless @map_controller.parentViewController.destination.nil?
+          button_str = @map_controller.parentViewController.view.subviews[0].is_a?(MKMapView) ? 'Start' : 'Exit'
+          @map_controller.parentViewController.add_message_box(button_str)
+        end
       end
     end
   end

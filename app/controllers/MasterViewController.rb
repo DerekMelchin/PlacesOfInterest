@@ -42,6 +42,7 @@ class MasterViewController < UIViewController
 
   def display_map
     unless @AR_controller.nil?
+      message_box.removeFromSuperview
       @AR_controller.pause_AR_session
       @AR_controller.willMoveToParentViewController(nil)
       @AR_controller.view.removeFromSuperview
@@ -57,6 +58,7 @@ class MasterViewController < UIViewController
   end
 
   def display_AR
+    message_box.removeFromSuperview
     @map_controller.willMoveToParentViewController(nil)
     @map_controller.view.removeFromSuperview
     self.view.addSubview(@AR_controller.view)
