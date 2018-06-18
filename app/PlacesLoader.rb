@@ -64,18 +64,15 @@ class PlacesLoader
       end
 
       @map_controller.places.each {|place| places_to_remove << place}
-      places_to_remove       -= new_places
-      @map_controller.places -= places_to_remove
-      new_places             -= @map_controller.places
+
+      places_to_remove.delete_if {|place| true if new_places.map {|p| p.title}.include?(place.title)}
+      @map_controller.places.delete_if {|place| true if places_to_remove.map {|p| p.title}.include?(place.title)}
+      new_places.delete_if {|place| true if @map_controller.places.map {|p| p.title}.include?(place.title)}
       @map_controller.places += new_places
 
       Dispatch::Queue.main.async do
         @map_controller.view.removeAnnotations(places_to_remove)
         @map_controller.view.addAnnotations(new_places)
-        unless @map_controller.parentViewController.destination.nil?
-          button_str = @map_controller.parentViewController.view.subviews[0].is_a?(MKMapView) ? 'Start' : 'Exit'
-          @map_controller.parentViewController.add_message_box(button_str)
-        end
       end
     end
   end
