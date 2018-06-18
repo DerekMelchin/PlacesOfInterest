@@ -28,15 +28,6 @@ class MapViewController < UIViewController
         break
       end
     end
-    if parentViewController.destination.nil?
-      alert = UIAlertController.alertControllerWithTitle('Out of Range',
-                                                         message: 'You need to be closer to enable AR.',
-                                                         preferredStyle: UIAlertControllerStyleAlert)
-      action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault, handler: nil)
-      alert.addAction(action)
-      presentViewController(alert, animated: true, completion: nil)
-      return
-    end
     parentViewController.add_message_box('Start')
   end
 

@@ -70,10 +70,33 @@ class PlacesLoader
       new_places.delete_if {|place| true if @map_controller.places.map {|p| p.title}.include?(place.title)}
       @map_controller.places += new_places
 
+      unless @map_controller.parentViewController.destination.nil?
+        removing_destination = places_to_remove.map {|place| place.title}.include?(@map_controller.parentViewController.destination.title)
+      end
+
       Dispatch::Queue.main.async do
         @map_controller.view.removeAnnotations(places_to_remove)
         @map_controller.view.addAnnotations(new_places)
       end
+
+      alert_out_of_range if removing_destination && in_AR_mode
     end
+  end
+
+  def in_AR_mode
+    @map_controller.parentViewController.view.subviews.map {|view| view.class}.include?(ARSCNView)
+  end
+
+  def alert_out_of_range
+    alert = UIAlertController.alertControllerWithTitle('Out of Range',
+                                                       message: 'You need to be closer to the location to enable AR.',
+                                                       preferredStyle: UIAlertControllerStyleAlert)
+    handler = lambda  do |action|
+      @map_controller.parentViewController.display_map
+      @map_controller.parentViewController.view.subviews[1].removeFromSuperview
+    end
+    action = UIAlertAction.actionWithTitle('Ok', style: UIAlertActionStyleDefault, handler: handler)
+    alert.addAction(action)
+    @map_controller.parentViewController.presentViewController(alert, animated: true, completion: nil)
   end
 end
