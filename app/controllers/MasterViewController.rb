@@ -91,7 +91,7 @@ class MasterViewController < UIViewController
     button_label           = UILabel.new
     button_label.font      = UIFont.systemFontOfSize(18)
     button_label.text      = button_str
-    button_label.textColor = UIColor.greenColor
+    button_label.textColor = UIColor.colorWithRed(0, green: 0.8, blue: 0.8, alpha: 0.9)
     button_label.frame     = [[0, 0], [button_width, height]]
     if button_str == 'Exit'
       @exit_button = UIView.alloc.initWithFrame(button_frame)
