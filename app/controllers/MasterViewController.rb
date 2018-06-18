@@ -123,8 +123,7 @@ class MasterViewController < UIViewController
   def locationManager(_, didUpdateLocations: locations)
     @curr_location = locations.last
     if @curr_location.horizontalAccuracy < 100
-      @map_controller.map_camera.centerCoordinate = @curr_location.coordinate
-      if !@map_controller.started_loading_POIs || @curr_location.distanceFromLocation(@previous_update_location) > 100
+      if !@map_controller.started_loading_POIs || @curr_location.distanceFromLocation(@previous_update_location) > 10
         @map_controller.started_loading_POIs = true
         @previous_update_location = @curr_location
         @map_controller.loader.load_POIs(@map_controller, @curr_location, 1000)

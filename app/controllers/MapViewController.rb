@@ -15,8 +15,6 @@ class MapViewController < UIViewController
     view.scrollEnabled     = false
     view.showsCompass      = false
     view.delegate          = self
-    @map_camera = MKMapCamera.camera
-    view.setCamera(@map_camera, animated: false)
     @loader = PlacesLoader.alloc.init
   end
 
