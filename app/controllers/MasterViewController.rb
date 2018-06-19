@@ -126,7 +126,7 @@ class MasterViewController < UIViewController
         @curr_location.distanceFromLocation(@previous_update_location) > 50)
         @map_controller.started_loading_POIs = true
         @previous_update_location = @curr_location
-        @map_controller.loader.load_POIs(@map_controller, @curr_location, 1000)
+        @map_controller.loader.load_POIs(@curr_location, 1000)
     end
     self.view.subviews.each do |view|
       if view.is_a?(MKMapView) && !@distance.nil?

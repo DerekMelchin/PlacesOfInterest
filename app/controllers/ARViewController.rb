@@ -64,7 +64,15 @@ class ARViewController < UIViewController
     config    = NSURLSessionConfiguration.defaultSessionConfiguration
     session   = NSURLSession.sessionWithConfiguration(config)
 
-    completion_handler = lambda do |data, response, error|
+    data_task = session.dataTaskWithURL(url, completionHandler: completion_handler)
+    data_task.resume
+    while @destination_altitude.nil?; end
+    y = @destination_altitude - parentViewController.curr_location.altitude
+    SCNVector3Make(x, y, z)
+  end
+
+  def completion_handler
+    lambda do |data, response, error|
       if !error.nil?
         puts error
       elsif response.statusCode == 200
@@ -81,12 +89,6 @@ class ARViewController < UIViewController
         end
       end
     end
-
-    data_task = session.dataTaskWithURL(url, completionHandler: completion_handler)
-    data_task.resume
-    while @destination_altitude.nil?; end
-    y = @destination_altitude - parentViewController.curr_location.altitude
-    SCNVector3Make(x, y, z)
   end
 
   def error_handler(dict, _)

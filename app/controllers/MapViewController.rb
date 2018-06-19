@@ -15,7 +15,7 @@ class MapViewController < UIViewController
     view.scrollEnabled     = false
     view.showsCompass      = false
     view.delegate          = self
-    @loader = PlacesLoader.alloc.init
+    @loader = PlacesLoader.alloc.init(self)
   end
 
   def mapView(mapView, didSelectAnnotationView: view)
