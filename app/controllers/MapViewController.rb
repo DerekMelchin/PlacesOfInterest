@@ -14,6 +14,7 @@ class MapViewController < UIViewController
     view.rotateEnabled     = false
     view.scrollEnabled     = false
     view.showsCompass      = false
+    view.zoomEnabled       = false
     view.delegate          = self
     @loader = PlacesLoader.alloc.init(self)
   end
@@ -45,6 +46,9 @@ class MapViewController < UIViewController
   end
 
   def mapViewDidFinishLoadingMap(_)
+    span = MKCoordinateSpanMake(0.0125, 0.0125)
+    region = MKCoordinateRegionMake(parentViewController.curr_location.coordinate, span)
+    view.setRegion(region, animated: false)
     view.setUserTrackingMode(MKUserTrackingModeFollowWithHeading, animated: false)
   end
 end
