@@ -1,5 +1,5 @@
 class MapViewController < UIViewController
-  attr_accessor :started_loading_POIs, :places, :map_camera, :loader
+  attr_accessor :started_loading_POIs, :places, :loader
 
   def init
     @started_loading_POIs = false
