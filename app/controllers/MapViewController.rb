@@ -46,9 +46,14 @@ class MapViewController < UIViewController
   end
 
   def mapViewDidFinishLoadingMap(_)
-    span = MKCoordinateSpanMake(0.0125, 0.0125)
-    region = MKCoordinateRegionMake(parentViewController.curr_location.coordinate, span)
-    view.setRegion(region, animated: false)
-    view.setUserTrackingMode(MKUserTrackingModeFollowWithHeading, animated: false)
+    Dispatch.once do
+      Dispatch::Queue.new('set_map_region_and_tracking_mode').async do
+        while parentViewController.curr_location.nil?; end
+        span = MKCoordinateSpanMake(0.0125, 0.0125)
+        region = MKCoordinateRegionMake(parentViewController.curr_location.coordinate, span)
+        view.setRegion(region, animated: false)
+        view.setUserTrackingMode(MKUserTrackingModeFollowWithHeading, animated: false)
+      end
+    end
   end
 end
