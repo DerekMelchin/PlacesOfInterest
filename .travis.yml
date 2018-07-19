@@ -1,4 +1,6 @@
 language: objective-c
+rvm:
+    - 2.4
 env:
     - TMP_DIR=./tmp
 before_install:
