@@ -4,9 +4,7 @@ rvm:
 env:
     - TMP_DIR=./tmp
 before_install:
-    - sudo chown -R travis ~/Library/RubyMotion
-    - mkdir -p ~/Library/RubyMotion/build
-    - sudo motion update && sudo motion repo
+    - sudo rm -rf ~/.rubymotion && sudo motion update && motion repo
     - gem install bundler
 gemfile:
   - Gemfile
