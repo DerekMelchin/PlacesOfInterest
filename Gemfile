@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rake'
+gem 'rake', :groups => [:development, :test]
 gem 'motion-provisioning'
 gem 'motion-hockeyapp'
 gem 'motion-installr'
