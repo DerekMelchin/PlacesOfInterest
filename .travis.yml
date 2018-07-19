@@ -6,6 +6,7 @@ env:
 before_install:
     - sudo rm -rf ~/.rubymotion && sudo motion update && motion repo
     - gem install bundler
+    - gem install --pristine rake
 gemfile:
   - Gemfile
 script:
