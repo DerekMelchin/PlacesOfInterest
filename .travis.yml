@@ -1,4 +1,6 @@
 language: objective-c
+env:
+    - BUNDLE_PATH=./vendor/bundle
 before_install:
     - (ruby --version)
     - sudo chown -R travis ~/Library/RubyMotion
