@@ -1,6 +1,4 @@
 language: objective-c
-env:
-    - BUNDLE_PATH=./vendor/bundle
 before_install:
     - (ruby --version)
     - sudo chown -R travis ~/Library/RubyMotion
@@ -9,6 +7,6 @@ before_install:
 gemfile:
   - Gemfile
 script:
-    - bundle install
+    - gem install rake && bundle install
     - bundle exec rake clean
     - bundle exec rake spec
