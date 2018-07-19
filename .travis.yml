@@ -11,7 +11,5 @@ before_install:
 gemfile:
   - Gemfile
 script:
-    - bundle install
-    - ls -al vendor/bundle/ruby
     - bundle exec rake clean
     - bundle exec rake spec
