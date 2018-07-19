@@ -1,4 +1,6 @@
 language: objective-c
+env:
+    - TMP_DIR=./tmp
 before_install:
     - (ruby --version)
     - sudo chown -R travis ~/Library/RubyMotion
