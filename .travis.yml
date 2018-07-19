@@ -6,9 +6,10 @@ before_install:
     - sudo chown -R travis ~/Library/RubyMotion
     - mkdir -p ~/Library/RubyMotion/build
     - sudo motion update && sudo motion repo
+    - bundle config --global disable_shared_gems true
 gemfile:
   - Gemfile
 script:
-    - gem install rake && gem install bundler && bundle install
+    - bundle install
     - bundle exec rake clean
     - bundle exec rake spec
