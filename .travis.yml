@@ -5,10 +5,7 @@ env:
     - TMP_DIR=./tmp
 before_install:
     - sudo rm -rf ~/.rubymotion && sudo motion update && motion repo
-    - gem install bundler
-    - gem install rake --version 12.3.1
 gemfile:
   - Gemfile
 script:
-    - bundle exec rake clean
     - bundle exec rake spec
