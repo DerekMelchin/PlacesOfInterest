@@ -10,7 +10,6 @@ gemfile:
   - Gemfile
 script:
     - bundle install
-    - ls -al vendor
-    - ls -al vendor/bundle
+    - ls -al vendor/bundle/ruby
     - bundle exec rake clean
     - bundle exec rake spec
