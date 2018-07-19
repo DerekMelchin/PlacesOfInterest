@@ -9,7 +9,8 @@ before_install:
 gemfile:
   - Gemfile
 script:
-    - bundle config
     - bundle install
+    - ls -al vendor
+    - ls -al vendor/bundle
     - bundle exec rake clean
     - bundle exec rake spec
